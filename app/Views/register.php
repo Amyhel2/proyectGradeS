@@ -92,8 +92,11 @@
                     <label class="form-label" for="form3Example12">Tipo</label>
                   </div>
                   <div class="d-flex justify-content-end pt-3">
-                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning btn-lg ms-2">Registrarr</button>
+                    
+                  <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning btn-lg ms-2">Registrar</button>
+                  
                   </div>
+                  
                 </form>
 
                 <?php if(session()->getFlashdata('errors')!==null):?>
@@ -101,9 +104,16 @@
                         <?= session()->getFlashdata('errors');?>
                     </div>
                 <?php endif;?>
+                
 
 
               </div>
+              <div class="card-footer py-3 border-0">
+                 <div class="d-flex justify-content-end pt-3">
+                  <a href="<?=base_url();?>" class="btn btn-warning btn-lg ms-2" role="button" data-mdb-button-init data-mdb-ripple-init>Iniciar Sesion</a>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

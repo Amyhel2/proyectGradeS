@@ -7,7 +7,7 @@
         <p><?=$message;?></p>
         <div class="d-flex aling-items-center ">
             <a href="<?=base_url();?>" class="btn btn-primary ms-auto">
-                Iniciar Secion
+                Iniciar Sesion
             </a>
 
         </div>
