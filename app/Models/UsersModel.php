@@ -13,7 +13,7 @@ class UsersModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     
-    
+
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
