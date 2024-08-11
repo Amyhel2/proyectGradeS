@@ -12,8 +12,27 @@ class UsersModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
+    protected $allowedFields = [
+        'nombres',
+        'apellido_paterno',
+        'apellido_materno',
+        'ci',
+        'rango',
+        'numero_placa',
+        'fecha_nacimiento',
+        'sexo',
+        'direccion',
+        'celular',
+        'email',
+        'user',
+        'password',
+        'tipo',
+        'activo',
+        'token_activacion',
+        'token_reinicio',
+        'token_reinicio_expira'
+    ];
     
-
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -22,11 +41,13 @@ class UsersModel extends Model
     protected array $castHandlers = [];
 
     // Dates
-    protected $useTimestamps = false;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
+    protected $useTimestamps = true;
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'creado_en';
+    protected $updatedField = 'actualizado_en';
+
+
+    //protected $deletedField  = 'deleted_at';
 
     /* Validation
     protected $validationRules      = [];

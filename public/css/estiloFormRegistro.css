@@ -1,0 +1,22 @@
+/*Estilos Formulario de registro*/
+#card-e{
+    background-color:#d3d3d3;
+    
+}
+.card-registration .select-input.form-control[readonly]:not([disabled]) {
+    font-size: 1rem;
+    
+    line-height: 2.15;
+    padding-left: .75em;
+    padding-right: .75em;
+    }
+    .card-registration .select-arrow {
+    top: 13px;
+    }
+    .custom-img {
+        border-top-left-radius: .25rem;
+        border-bottom-left-radius: .25rem;
+        width: 100%; /* Ajusta el ancho al 100% del contenedor */
+        height: 50%; /* Ajusta la altura al 50% del contenedor */
+    }
+    
