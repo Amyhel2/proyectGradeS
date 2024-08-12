@@ -29,11 +29,7 @@
                         <input type="submit" value="Login" class="btn float-right login_btn">
                     </div>
                 </form>
-                <?php if(session()->getFlashdata('errors')!==null):?>
-                    <div class="alert alert-danger my-3" role="alert">
-                        <?= session()->getFlashdata('errors');?>
-                    </div>
-                <?php endif;?>
+                
             </div>
             <div class="card-footer">
                 <div class="d-flex justify-content-center links">
@@ -41,6 +37,13 @@
                 </div>
                 <div class="d-flex justify-content-center">
                     <a href="<?= base_url('password-request'); ?>">¿Olvidaste tu contraseña?</a>
+
+                    
+                    <?php if(session()->getFlashdata('errors')!==null):?>
+                    <div class="alert alert-danger my-3" role="alert">
+                        <?= session()->getFlashdata('errors');?>
+                    </div>
+                <?php endif;?>
                 </div>
                 <div class="d-flex justify-content-end social_icon">
                     <span><i class="fab fa-facebook-square"></i></span>

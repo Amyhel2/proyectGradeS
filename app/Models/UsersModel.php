@@ -46,6 +46,16 @@ class UsersModel extends Model
     protected $createdField = 'creado_en';
     protected $updatedField = 'actualizado_en';
 
+    public function validateUser($user,$password){
+        $user=$this->where(['user'=>$user,'activo'=>1])->first();
+        if($user && password_verify($password,$user['password'])){
+            return $user;
+
+        }
+        return null;
+
+    }
+
 
     //protected $deletedField  = 'deleted_at';
 

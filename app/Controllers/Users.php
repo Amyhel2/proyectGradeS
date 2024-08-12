@@ -114,4 +114,106 @@ class Users extends BaseController
 
         return $this->showMessage('Ocurrio un errror.','Por favor intenta nuevamente mas tarde.');
     }
+
+    public function linkRequestForm(){
+        return view('link_request');
+
+    }
+
+    public function sendResetLinkEmail(){
+        $rules=[
+            'email'=>'required|max_length[80]|valid_email',
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
+        }
+
+        $userModel = new UsersModel();
+
+        $post=$this->request->getPost(['email']);
+
+        $user=$userModel->where(['email'=>$post['email'],'activo'=>1])->first();
+        
+        if($user){
+            $token = bin2hex(random_bytes(20));
+            $expiresAt=new \DateTime();
+            $expiresAt->modify('+3 hour');
+            $userModel->update($user['id'],[
+                
+                'token_reinicio'=>$token,
+                'token_reinicio_expira'=>$expiresAt->format('Y-m-d H:i:s'),
+            ]);
+
+            $email = \Config\Services::email();
+
+            $email->setTo($post['email']);
+            $email->setSubject('Recuperar contrasena');
+
+            $url = base_url('password-reset/' . $token);
+            $body = '<p>Estimad@ ' . $user['nombres'] . '</p>';
+            $body .= "<p>Se ha solicitado un reinicio de contrasena.<br>Para restablecer su contrasena ingrese al siguiente enlace:
+              <a href='$url'>$url</a></p>";
+    
+
+            $email->setMessage($body);
+            $email->send();
+    }
+
+    $title = 'Correo de recuperacion enviado.';
+    $message = 'Se ha enviado un correo electronico con instrucciones para restablecer tu contrasena.';
+    
+    return $this->showMessage($title, $message);     
+
+    }
+
+    public function resetForm($token){
+        $userModel = new UsersModel();
+        $user=$userModel->where(['token_reinicio'=>$token])->first();
+        if($user){
+            $currentDateTime=new \DateTime();
+            $currentDateTimeStr=$currentDateTime->format('Y-m-d H:i:s');
+
+            if($currentDateTimeStr <= $user['token_reinicio_expira']){
+                return view('reset_password',['token'=>$token]);
+
+            }else{
+                return $this->showMessage('El mensaje ha expirado','Por favor solicita un nuevo enlace para restablecer tu contrasena.');
+
+            }
+
+        }
+        return $this->showMessage('Ocurrio un error.','Por favor intenta nuevamente mas tarde.');
+
+    }
+
+    public function resetPassword(){
+        $rules = [
+            
+            'password' => 'required|min_length[8]|max_length[255]',
+            'repassword' => 'matches[password]',
+            
+        ];
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
+        }
+    
+        $userModel = new UsersModel();
+        $post=$this->request->getPost(['token','password']);
+
+        
+        $user=$userModel->where(['token_reinicio'=>$post['token'], 'activo'=>1])->first();
+        if($user){
+            $userModel->update($user['id'],[
+                'password' => password_hash($post['password'], PASSWORD_DEFAULT),
+                'token_reinicio'=>'',
+                'token_reinicio_expira'=>''
+            ]);
+            return $this->showMessage('Contrasena modificada.','Hemos modificado la contrasena.');
+        }
+        return $this->showMessage('Ocurrio un error.','Por favor intenta de nuevo mas tarde.');
+
+    }
+
+
 }
