@@ -1,0 +1,2 @@
+
+<?= $this->extend('dashboard/template'); ?>

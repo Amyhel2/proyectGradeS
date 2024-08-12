@@ -26,3 +26,5 @@ $routes->post('password/reset', 'Users::resetPassword');
 $routes->group('/',['filter'=>'auth'], function($routes){
     $routes->get('home', 'Home::index');
 });
+
+$routes->get('desktop', 'Dashboard::index');

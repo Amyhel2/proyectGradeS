@@ -17,7 +17,7 @@
 
                 <h3 class="mb-5 text-uppercase">Formulario de Registro</h3>
 
-                <?= csrf_field();?>
+                
                 <form method="POST" action="<?= base_url('register'); ?>">
                   <?= csrf_field(); ?>
                   <div data-mdb-input-init class="form-outline mb-4">
