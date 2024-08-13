@@ -12,19 +12,19 @@ $routes->post('auth', 'Login::auth');
 
 $routes->get('logout', 'Login::logout');
 
-$routes->get('register', 'UsersRegister::index');
+$routes->get('register', 'Users::index');
 
-$routes->post('register', 'UsersRegister::create');
+$routes->post('register', 'Users::create');
 
-$routes->get('activate-user/(:any)', 'UsersRegister::activateUser/$1');
+$routes->get('activate-user/(:any)', 'Users::activateUser/$1');
 
-$routes->get('password-request', 'UsersRegister::linkRequestForm');
+$routes->get('password-request', 'Users::linkRequestForm');
 
-$routes->post('password-email', 'UsersRegister::sendResetLinkEmail');
+$routes->post('password-email', 'Users::sendResetLinkEmail');
 
-$routes->get('password-reset/(:any)', 'UsersRegister::resetForm/$1');
+$routes->get('password-reset/(:any)', 'Users::resetForm/$1');
 
-$routes->post('password/reset', 'UsersRegister::resetPassword');
+$routes->post('password/reset', 'Users::resetPassword');
 
 
 ///$routes->get('home', 'Home::index');

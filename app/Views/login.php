@@ -5,7 +5,7 @@
 <div class="d-flex justify-content-center h-100">
         <div class="card">
             <div class="card-header">
-                <h3>Unirse</h3>
+                <h3>Uniciar sesión</h3>
             </div>
             <div class="card-body">
                 <form action="<?= base_url('auth') ?>" method="post">
@@ -32,9 +32,9 @@
                 
             </div>
             <div class="card-footer">
-                <div class="d-flex justify-content-center links">
+                <!--<div class="d-flex justify-content-center links">
                     ¿No tienes una cuenta?<a href="<?= base_url('register'); ?>">Unirte</a>
-                </div>
+                </div>-->
                 <div class="d-flex justify-content-center">
                     <a href="<?= base_url('password-request'); ?>">¿Olvidaste tu contraseña?</a>
 

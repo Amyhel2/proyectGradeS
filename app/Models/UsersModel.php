@@ -27,7 +27,10 @@ class UsersModel extends Model
         'user',
         'password',
         'tipo',
-        
+        'activo',
+        'token_activacion',
+        'token_reinicio',
+        'token_reinicio_expira'
     ];
     
 
