@@ -27,10 +27,7 @@ class UsersModel extends Model
         'user',
         'password',
         'tipo',
-        'activo',
-        'token_activacion',
-        'token_reinicio',
-        'token_reinicio_expira'
+        
     ];
     
 
@@ -45,6 +42,8 @@ class UsersModel extends Model
     protected $dateFormat = 'datetime';
     protected $createdField = 'creado_en';
     protected $updatedField = 'actualizado_en';
+
+    
 
     public function validateUser($user,$password){
         $user=$this->where(['user'=>$user,'activo'=>1])->first();
