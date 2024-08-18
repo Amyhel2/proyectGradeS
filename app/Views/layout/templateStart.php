@@ -31,3 +31,4 @@
   <!-- /.content-wrapper -->
 
   <?= $this->include('dashboard/footer') ?> <!-- Incluye el pie de página -->
+  

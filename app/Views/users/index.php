@@ -1,5 +1,3 @@
-
-
 <?php echo $this->extend('layout/templateStart'); ?>
 
 <?= $this->section('content'); ?>
@@ -18,7 +16,6 @@
             <th scope="col">Número de Placa</th>
             <th scope="col">Correo Electrónico</th>
             <th scope="col">Celular</th>
-            <!-- Nuevos campos añadidos -->
             <th scope="col">Fecha de Nacimiento</th>
             <th scope="col">Sexo</th>
             <th scope="col">Dirección</th>
@@ -29,46 +26,83 @@
     </thead>
 
     <tbody>
-        <!-- Datos de prueba -->
+        <?php foreach($usuarios as $usuario): ?>
         <tr>
-            <td>1</td>
-            <td>JUAN PÉREZ GÓMEZ</td>
-            <td>12345678</td>
-            <td>Oficial</td>
-            <td>ABC123</td>
-            <td>juan.perez@example.com</td>
-            <td>123456789</td>
-            <td>1980-01-01</td>
-            <td>Masculino</td>
-            <td>Calle Falsa 123</td>
-            <td>Admin</td>
-            <td>Sí</td>
+            <td><?= $usuario['id']; ?></td>
+            <td><?= $usuario['nombres'] . ' ' . $usuario['apellido_paterno'] . ' ' . $usuario['apellido_materno']; ?></td>
+            <td><?= $usuario['ci']; ?></td>
+            <td><?= $usuario['rango']; ?></td>
+            <td><?= $usuario['numero_placa']; ?></td>
+            <td><?= $usuario['email']; ?></td>
+            <td><?= $usuario['celular']; ?></td>
+            <td><?= $usuario['fecha_nacimiento']; ?></td>
+            <td><?= $usuario['sexo'] == 'M' ? 'Masculino' : 'Femenino'; ?></td>
+            <td><?= $usuario['direccion']; ?></td>
+            <td><?= $usuario['tipo'] == 'admin' ? 'Admin' : 'Usuario'; ?></td>
+            <td><?= $usuario['activo'] == 1 ? 'Sí' : 'No'; ?></td>
             <td>
-                <a href="<?= base_url('users/edit/1')?>" class="btn btn-warning btn-sm me-2">Editar</a>
-                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" 
-                        data-bs-target="#eliminaModal" data-bs-id="1">Eliminar</button>
+
+                <a href="<?= base_url('users/' . $usuario['id']. '/edit'); ?>" class="btn btn-warning btn-sm me-2">Editar</a>
+
+                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#eliminaModal" data-bs-url="<?= base_url('users/' . $usuario['id']); ?>">Eliminar</button>
             </td>
+
+            
         </tr>
-        <tr>
-            <td>2</td>
-            <td>ANA MARTÍNEZ RAMOS</td>
-            <td>87654321</td>
-            <td>Sargento</td>
-            <td>XYZ789</td>
-            <td>ana.martinez@example.com</td>
-            <td>987654321</td>
-            <td>1990-05-15</td>
-            <td>Femenino</td>
-            <td>Avenida Siempre Viva 742</td>
-            <td>Usuario</td>
-            <td>No</td>
-            <td>
-                <a href="<?= base_url('users/edit/2')?>" class="btn btn-warning btn-sm me-2">Editar</a>
-                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" 
-                        data-bs-target="#eliminaModal" data-bs-id="2">Eliminar</button>
-            </td>
-        </tr>
+
+        <?php endforeach; ?>
+
     </tbody>
 </table>
 
+<div class="modal fade" id="eliminaModal" tabindex="-1" aria-labelledby="eliminaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="eliminaModalLabel">Aviso</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Desea eliminar este registro?</p>
+                </div>
+                <div class="modal-footer">
+
+                    <form id="form-elimina" action="" method="POST">
+                    <?= csrf_field(); ?>
+            
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+</div>
+
+
 <?= $this->endSection(); ?>
+
+
+
+<?= $this->section('script');?>
+
+<script>
+
+        const eliminaModal = document.getElementById('eliminaModal')
+        if (eliminaModal) {
+            eliminaModal.addEventListener('show.bs.modal', event => {
+                // Button that triggered the modal
+                const button = event.relatedTarget
+                // Extract info from data-bs-* attributes
+                const url = button.getAttribute('data-bs-url')
+
+                // Update the modal's content.
+                const form = eliminaModal.querySelector('#form-elimina')
+                form.setAttribute('action', url)
+            })
+        }
+        
+</script>
+
+<?= $this->endSection();?>

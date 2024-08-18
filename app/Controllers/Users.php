@@ -7,6 +7,10 @@ use App\Models\UsersModel;
 
 class Users extends BaseController
 {
+
+    protected $helpers=['form'];
+
+
     /**
      * Return an array of resource objects, themselves in array format.
      *
@@ -14,8 +18,11 @@ class Users extends BaseController
      */
     public function index()
     {
-        //
-        return view('users/index');
+        $userModel= new UsersModel();
+
+        $data['usuarios']= $userModel->findAll();
+
+        return view('users/index', $data);
     }
 
     /**
@@ -25,6 +32,9 @@ class Users extends BaseController
      *
      * @return ResponseInterface
      */
+
+
+
     public function show($id = null)
     {
         //
@@ -35,6 +45,9 @@ class Users extends BaseController
      *
      * @return ResponseInterface
      */
+
+
+
     public function new()
     {
         //
@@ -46,11 +59,14 @@ class Users extends BaseController
      *
      * @return ResponseInterface
      */
+
+
+
     public function create()
 {
     $rules = [
         'user' => 'required|max_length[30]|is_unique[users.user]',
-        'password' => 'required|min_length[8]|max_length[255]',
+        'password' => 'required|min_length[8]|max_length[255]|is_unique[users.password]',
         'repassword' => 'matches[password]',
         'nombres' => 'required|max_length[30]',
         'apellido_paterno' => 'required|max_length[30]',
@@ -59,7 +75,7 @@ class Users extends BaseController
         'rango' => 'required|max_length[20]',
         'numero_placa' => 'required|max_length[20]|is_unique[users.numero_placa]',
         'fecha_nacimiento' => 'required|valid_date[Y-m-d]',
-        'genero' => 'required|in_list[M,F]',
+        'sexo' => 'required|in_list[M,F]',
         'direccion' => 'required|max_length[255]',
         'celular' => 'required|max_length[15]|numeric',
         'email' => 'required|max_length[80]|valid_email|is_unique[users.email]',
@@ -74,10 +90,12 @@ class Users extends BaseController
     
     $post = $this->request->getPost([
         'user', 'password', 'nombres', 'apellido_paterno', 'apellido_materno', 'ci', 'rango', 
-        'numero_placa', 'fecha_nacimiento', 'genero', 'direccion', 'celular', 'email', 'tipo'
+        'numero_placa', 'fecha_nacimiento', 'sexo', 'direccion', 'celular', 'email', 'tipo'
     ]);
 
     $token = bin2hex(random_bytes(20));
+
+    //Insercion de los valores del formulario a los campos de la base de datos
 
     $userModel->insert([
         'user' => $post['user'],
@@ -89,7 +107,7 @@ class Users extends BaseController
         'rango' => $post['rango'],
         'numero_placa' => $post['numero_placa'],
         'fecha_nacimiento' => $post['fecha_nacimiento'],
-        'genero' => $post['genero'],
+        'sexo' => $post['sexo'],
         'direccion' => $post['direccion'],
         'celular' => $post['celular'],
         'email' => $post['email'],
@@ -104,6 +122,7 @@ class Users extends BaseController
     $email->setSubject('Activa tu cuenta');
 
     $url = base_url('activate-user/' . $token);
+
     $body = '<p>Hola ' . $post['nombres'] . '</p>';
     $body .= "<p>Para continuar con el proceso haz click en el siguiente enlace <a href='$url'>Activar cuenta</a></p>";
     $body .= 'Gracias';
@@ -111,10 +130,18 @@ class Users extends BaseController
     $email->setMessage($body);
     $email->send();
 
-    $title = 'Registro exitoso';
-    $message = 'Revisa tu correo electrónico para activar tu cuenta.';
+    //$title = 'Registro exitoso';
+    //$message = 'Revisa tu correo electrónico para activar tu cuenta.';
     
-    return $this->showMessage($title, $message);
+    //return $this->showMessage($title, $message);
+    //return redirect()->route('usuarios');
+    
+    // Establecer mensajes flashdata
+    $this->session->setFlashdata('message', 'Usuario creado con éxito');
+    $this->session->setFlashdata('message_type', 'success');
+
+    // Redirigir al listado de usuarios
+    return redirect()->route('users');
     }
 
     /**
@@ -124,9 +151,20 @@ class Users extends BaseController
      *
      * @return ResponseInterface
      */
+
+
+
     public function edit($id = null)
     {
-        //
+        if($id == null){
+            return redirect()->route('users');
+        }
+
+        $userModel = new UsersModel();
+
+        $data['usuario']= $userModel->find($id);
+
+        return view('users/editUser',$data);
     }
 
     /**
@@ -136,9 +174,64 @@ class Users extends BaseController
      *
      * @return ResponseInterface
      */
+
+
+
     public function update($id = null)
     {
         //
+        if(!$this->request->is('PUT') || $id == null){
+            return redirect()->route('users');
+        }
+
+        $rules = [
+            //'user' => "required|max_length[30]|is_unique[users.user,id,{$id}]",
+            'password' => "required|min_length[8]|max_length[255]|is_unique[users.password,id,{$id}]",
+            'nombres' => 'required|max_length[30]',
+            'apellido_paterno' => 'required|max_length[30]',
+            'apellido_materno' => 'required|max_length[30]',
+            'ci' => "required|max_length[20]|is_unique[users.ci,id,{$id}]",
+            'rango' => 'required|max_length[20]',
+            'numero_placa' => "required|max_length[20]|is_unique[users.numero_placa,id,{$id}]",
+            'fecha_nacimiento' => 'required|valid_date[Y-m-d]',
+            //'sexo' => 'required|in_list[M,F]',
+            'direccion' => 'required|max_length[255]',
+            'celular' => 'required|max_length[15]|numeric',
+            'email' => 'required|max_length[80]|valid_email',
+            'tipo' => 'required|in_list[admin,user]'
+        ];
+    
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
+        }
+    
+        $post = $this->request->getPost([
+            'password', 'nombres', 'apellido_paterno', 'apellido_materno', 'ci', 'rango', 
+            'numero_placa', 'fecha_nacimiento', 'direccion', 'celular', 'email', 'tipo','activo'
+        ]);
+
+        $userModel = new UsersModel();
+
+        $userModel->update($id, [
+            //'user' => $post['user'],
+            'password' => $post['password'],
+            'nombres' => $post['nombres'],
+            'apellido_paterno' => $post['apellido_paterno'],
+            'apellido_materno' => $post['apellido_materno'],
+            'ci' => $post['ci'],
+            'rango' => $post['rango'],
+            'numero_placa' => $post['numero_placa'],
+            'fecha_nacimiento' => $post['fecha_nacimiento'],
+            //'sexo' => $post['sexo'],
+            'direccion' => $post['direccion'],
+            'celular' => $post['celular'],
+            'email' => $post['email'],
+            'tipo' => $post['tipo'],
+            'activo' => $post['activo']
+            //'token_activacion' => $token
+        ]);
+
+        return redirect()->route('users');
     }
 
     /**
@@ -148,14 +241,24 @@ class Users extends BaseController
      *
      * @return ResponseInterface
      */
+
+
+
     public function delete($id = null)
     {
-        //
+    if (!$this->request->is('DELETE') || $id == null) {
+        return redirect()->route('users');
+
     }
 
+    $userModel = new UsersModel();
+    $userModel->delete($id);
 
 
+    return redirect()->to('users');
+    }
 
+    /*Funciones extras*/
 
     private function showMessage($title,$message){
         $data=[
