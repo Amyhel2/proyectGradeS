@@ -105,8 +105,6 @@
                     </div>
                 <?php endif;?>
                 
-
-
               </div>
               <div class="card-footer py-3 border-0">
                  <div class="d-flex justify-content-end pt-3">

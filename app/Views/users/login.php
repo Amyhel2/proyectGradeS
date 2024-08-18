@@ -8,6 +8,7 @@
                 <h3>Uniciar sesión</h3>
             </div>
             <div class="card-body">
+
                 <form action="<?= base_url('auth') ?>" method="post">
                     <?= csrf_field();?>
                     <div class="input-group form-group">
@@ -31,20 +32,28 @@
                 </form>
                 
             </div>
+
+
             <div class="card-footer">
+
                 <!--<div class="d-flex justify-content-center links">
                     ¿No tienes una cuenta?<a href="<?= base_url('register'); ?>">Unirte</a>
                 </div>-->
+
                 <div class="d-flex justify-content-center">
+
                     <a href="<?= base_url('password-request'); ?>">¿Olvidaste tu contraseña?</a>
 
-                    
                     <?php if(session()->getFlashdata('errors')!==null):?>
+
                     <div class="alert alert-danger my-3" role="alert">
                         <?= session()->getFlashdata('errors');?>
                     </div>
-                <?php endif;?>
+
+                    <?php endif;?>
+
                 </div>
+
                 <div class="d-flex justify-content-end social_icon">
                     <span><i class="fab fa-facebook-square"></i></span>
                     <span><i class="fab fa-google-plus-square"></i></span>

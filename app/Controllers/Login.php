@@ -10,7 +10,7 @@ class Login extends BaseController
     //protected $helpers = ['form'];
     public function index()//: string
     {
-        return view('login');
+        return view('users/login');
     }
 
     public function auth(){

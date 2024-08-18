@@ -1,0 +1,20 @@
+/* Cambiar el color de fondo del sidebar */
+.main-sidebar {
+    background-color: #343a40; /* Cambia este color por el que prefieras */
+}
+
+/* Cambiar el color del texto en el menú */
+.nav-sidebar .nav-link {
+    color: #ffffff; /* Cambia el color del texto */
+}
+
+/* Cambiar el color de fondo al hacer hover en los elementos del menú */
+.nav-sidebar .nav-link:hover {
+    background-color: #1d9665; /* Cambia este color por el que prefieras */
+}
+
+/* Cambiar el color del enlace activo */
+.nav-sidebar .nav-link.active {
+    background-color: #007bff; /* Cambia este color por el que prefieras */
+    color: #ffffff; /* Cambia el color del texto del enlace activo */
+}

@@ -162,7 +162,7 @@ class Users extends BaseController
             'title'=>$title,
             'message'=>$message,
         ];
-        return view('message', $data);
+        return view('users/message', $data);
 
     }
 
@@ -187,7 +187,7 @@ class Users extends BaseController
     }
 
     public function linkRequestForm(){
-        return view('link_request');
+        return view('users/link_request');
 
     }
 
@@ -222,6 +222,7 @@ class Users extends BaseController
             $email->setSubject('Recuperar contrasena');
 
             $url = base_url('password-reset/' . $token);
+
             $body = '<p>Estimad@ ' . $user['nombres'] . '</p>';
             $body .= "<p>Se ha solicitado un reinicio de contrasena.<br>Para restablecer su contrasena ingrese al siguiente enlace:
               <a href='$url'>$url</a></p>";
@@ -246,7 +247,7 @@ class Users extends BaseController
             $currentDateTimeStr=$currentDateTime->format('Y-m-d H:i:s');
 
             if($currentDateTimeStr <= $user['token_reinicio_expira']){
-                return view('reset_password',['token'=>$token]);
+                return view('users/reset_password',['token'=>$token]);
 
             }else{
                 return $this->showMessage('El mensaje ha expirado','Por favor solicita un nuevo enlace para restablecer tu contrasena.');
@@ -259,12 +260,14 @@ class Users extends BaseController
     }
 
     public function resetPassword(){
+        
         $rules = [
             
             'password' => 'required|min_length[8]|max_length[255]',
             'repassword' => 'matches[password]',
             
         ];
+
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
         }
@@ -274,14 +277,18 @@ class Users extends BaseController
 
         
         $user=$userModel->where(['token_reinicio'=>$post['token'], 'activo'=>1])->first();
+
         if($user){
+
             $userModel->update($user['id'],[
                 'password' => password_hash($post['password'], PASSWORD_DEFAULT),
                 'token_reinicio'=>'',
-                'token_reinicio_expira'=>''
+                'token_reinicio_expira'=>'',
             ]);
+
             return $this->showMessage('Contrasena modificada.','Hemos modificado la contrasena.');
         }
+
         return $this->showMessage('Ocurrio un error.','Por favor intenta de nuevo mas tarde.');
 
     }
