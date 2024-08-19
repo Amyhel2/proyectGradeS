@@ -36,7 +36,7 @@
         <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
 
         <li class="nav-item">
-          <a href="<?= base_url('user'); ?>" class="nav-link">
+          <a href="<?= base_url('start'); ?>" class="nav-link">
             <i class="nav-icon fas fa-home"></i>
             <p>Inicio</p>
           </a>
@@ -53,7 +53,7 @@
 
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="../../index2.html" class="nav-link">
+              <a href="<?= base_url('users');?>" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Gestión de Usuarios</p>
               </a>
@@ -72,9 +72,9 @@
 
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="../../index2.html" class="nav-link">
+              <a href="<?= base_url('criminals');?>" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Listado de Criminales</p>
+                <p>Gestion de Criminales</p>
               </a>
             </li>
           </ul>

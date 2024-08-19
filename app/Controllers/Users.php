@@ -258,6 +258,16 @@ class Users extends BaseController
     return redirect()->to('users');
     }
 
+
+    public function softDelete($id)
+{
+    $userModel = new UsersModel();
+    $data = ['activo' => 0]; // Suponiendo que 'activo' es el campo que indica si el usuario está activo o no.
+    $userModel->update($id, $data);
+
+    return redirect()->to(base_url('users'))->with('message', 'Usuario desactivado correctamente.');
+}
+
     /*Funciones extras*/
 
     private function showMessage($title,$message){

@@ -30,7 +30,7 @@ class Login extends BaseController
 
         if($user !== null){
             $this->setSession($user);
-            return redirect()->to(base_url('init'));
+            return redirect()->to(base_url('start'));
 
         }
         return redirect()->back()->withInput()->with('errors','El usuario y/o contrasenia son incorrectos.');

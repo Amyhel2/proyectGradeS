@@ -40,13 +40,15 @@
             <td><?= $usuario['direccion']; ?></td>
             <td><?= $usuario['tipo'] == 'admin' ? 'Admin' : 'Usuario'; ?></td>
             <td><?= $usuario['activo'] == 1 ? 'Sí' : 'No'; ?></td>
+            
             <td>
+    <a href="<?= base_url('users/' . $usuario['id'] . '/edit'); ?>" class="btn btn-warning btn-sm me-2">Editar</a>
 
-                <a href="<?= base_url('users/' . $usuario['id']. '/edit'); ?>" class="btn btn-warning btn-sm me-2">Editar</a>
+    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminaModal" data-bs-url="<?= base_url('users/' . $usuario['id']); ?>">Eliminacion física</button>
 
-                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#eliminaModal" data-bs-url="<?= base_url('users/' . $usuario['id']); ?>">Eliminar</button>
-            </td>
+    <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#borradoLogicoModal" data-bs-url="<?= base_url('users/' . $usuario['id'] . '/soft-delete'); ?>">Eliminacion lógica</button>
+</td>
+
 
             
         </tr>
@@ -64,7 +66,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>¿Desea eliminar este registro?</p>
+                    <p>¿Desea eliminar definitivamente este registro de la base de datos?</p>
                 </div>
                 <div class="modal-footer">
 
@@ -72,12 +74,37 @@
                     <?= csrf_field(); ?>
             
                         <input type="hidden" name="_method" value="DELETE">
+                        
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
+                        
+
                         <button type="submit" class="btn btn-danger">Eliminar</button>
                     </form>
                 </div>
             </div>
         </div>
+</div>
+
+<div class="modal fade" id="borradoLogicoModal" tabindex="-1" aria-labelledby="borradoLogicoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="borradoLogicoModalLabel">Aviso</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Desea desabilitar este registro?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="form-borrado-logico" action="" method="POST">
+                    <?= csrf_field(); ?>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-warning">Borrar Lógicamente</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -89,19 +116,27 @@
 
 <script>
 
-        const eliminaModal = document.getElementById('eliminaModal')
-        if (eliminaModal) {
-            eliminaModal.addEventListener('show.bs.modal', event => {
-                // Button that triggered the modal
-                const button = event.relatedTarget
-                // Extract info from data-bs-* attributes
-                const url = button.getAttribute('data-bs-url')
+const eliminaModal = document.getElementById('eliminaModal')
+const borradoLogicoModal = document.getElementById('borradoLogicoModal')
 
-                // Update the modal's content.
-                const form = eliminaModal.querySelector('#form-elimina')
-                form.setAttribute('action', url)
-            })
-        }
+if (eliminaModal) {
+    eliminaModal.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget
+        const url = button.getAttribute('data-bs-url')
+        const form = eliminaModal.querySelector('#form-elimina')
+        form.setAttribute('action', url)
+    })
+}
+
+if (borradoLogicoModal) {
+    borradoLogicoModal.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget
+        const url = button.getAttribute('data-bs-url')
+        const form = borradoLogicoModal.querySelector('#form-borrado-logico')
+        form.setAttribute('action', url)
+    })
+}
+
         
 </script>
 

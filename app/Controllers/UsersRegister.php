@@ -51,6 +51,7 @@ class UsersRegister extends BaseController
     $userModel->insert([
         'user' => $post['user'],
         'password' => password_hash($post['password'], PASSWORD_DEFAULT),
+        //'password' => $post['password'],
         'nombres' => $post['nombres'],
         'apellido_paterno' => $post['apellido_paterno'],
         'apellido_materno' => $post['apellido_materno'],
