@@ -20,7 +20,7 @@ class Users extends BaseController
     {
         $userModel= new UsersModel();
 
-        $data['usuarios']= $userModel->findAll();
+        $data['usuarios'] = $userModel->where('activo', 1)->findAll();
 
         return view('users/index', $data);
     }
