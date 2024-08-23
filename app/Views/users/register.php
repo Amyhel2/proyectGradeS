@@ -18,7 +18,7 @@
                 <h3 class="mb-5 text-uppercase">Formulario de Registro</h3>
 
                 
-                <form method="POST" action="<?= base_url('register'); ?>">
+                <form method="POST" action="<?= base_url('users'); ?>">
                   <?= csrf_field(); ?>
                   <div data-mdb-input-init class="form-outline mb-4">
                     <input type="text" value="<?=set_value('nombres');?>" id="nombres" class="form-control form-control-lg" name="nombres" required />

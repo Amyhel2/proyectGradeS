@@ -10,4 +10,11 @@ class Dashboard extends BaseController
         return view('index');
         
     }
+
+    public function registro()
+    {
+        return view('users/register');
+        
+    }
+     
 }

@@ -7,13 +7,13 @@ use CodeIgniter\Model;
 class CriminalsModel extends Model
 {
     protected $table            = 'criminals';
-    protected $primaryKey       = 'id';
+    protected $primaryKey       = 'idCriminal';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields = [
-        'nombre', 'foto', 'delitos', 'razon_busqueda', 'fecha_creacion'
+        'nombre','alias', 'ci', 'foto', 'delitos', 'razon_busqueda', 'activo'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -25,9 +25,9 @@ class CriminalsModel extends Model
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
+    protected $createdField  = 'creado_en';
+    protected $updatedField  = 'actualizado_en';
+    /*protected $deletedField  = 'deleted_at';
 
     // Validation
     protected $validationRules      = [];
@@ -44,5 +44,15 @@ class CriminalsModel extends Model
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = [];*/
 }
+
+
+
+
+ 
+
+
+
+
+    
