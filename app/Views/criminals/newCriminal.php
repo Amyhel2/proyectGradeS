@@ -1,79 +1,54 @@
 
-<?php echo $this->extend('layout/templateStart'); ?>
+<?= $this->extend('layout/templateStart'); ?>
 
 <?= $this->section('content'); ?>
 
-<h3 class="my-3">Nuevo Criminal</h3>
+<h3 class="my-3">Agregar Nuevo Criminal</h3>
 
-<?php if(session()->getFlashdata('error')!== null) { ?>
-  <div class="alert alert-danger">
+<?php if (session()->getFlashdata('errors') !== null): ?>
+    <div class="alert alert-danger">
+        <?= session()->getFlashdata('errors'); ?>
+    </div>
+<?php endif; ?>
 
-    <?= session()->getFlashdata('error'); ?>
+<form method="POST" action="<?= base_url('criminals'); ?>" enctype="multipart/form-data">
+    <?= csrf_field(); ?>
 
-  </div>
-  
-<?php } ?>
+    <div class="form-outline mb-4">
+        <input type="text" id="nombre" class="form-control" name="nombre" value="<?= old('nombre'); ?>" required />
+        <label class="form-label" for="nombre">Nombres</label>
+    </div>
 
-                <form method="POST" action="<?= base_url('criminals'); ?>">
+    <div class="form-outline mb-4">
+        <input type="text" id="alias" class="form-control" name="alias" value="<?= old('alias'); ?>" required />
+        <label class="form-label" for="alias">Alias</label>
+    </div>
 
-                  <?= csrf_field(); ?>
+    <div class="form-outline mb-4">
+        <input type="text" id="ci" class="form-control" name="ci" value="<?= old('ci'); ?>" required />
+        <label class="form-label" for="ci">Número de CI</label>
+    </div>
 
-                  <div data-mdb-input-init class="form-outline mb-4">
-                    <input type="text" value="<?=set_value('nombre');?>" id="nombre" class="form-control form-control-lg" name="nombre" required />
-                    <label class="form-label" for="form3Example1">Nombre completo</label>
-                  </div>
+    <div class="mb-4">
+        <label class="form-label" for="foto">Foto</label>
+        <input type="file" id="foto" class="form-control" name="foto" required />
+        <small class="text-muted">Formatos permitidos: JPG, JPEG, PNG. Tamaño máximo: 2MB.</small>
+    </div>
 
-                  <div data-mdb-input-init class="form-outline mb-4">
-                    <input type="text" value="<?=set_value('alias');?>" id="alias" class="form-control form-control-lg" name="alias" required />
-                    <label class="form-label" for="form3Example5">Alias</label>
-                  </div>
+    <div class="form-outline mb-4">
+        <textarea id="delitos" class="form-control" name="delitos" rows="3" required><?= old('delitos'); ?></textarea>
+        <label class="form-label" for="delitos">Delitos</label>
+    </div>
 
-                  
-                  <div data-mdb-input-init class="form-outline mb-4">
-                    <input type="text" value="<?=set_value('ci');?>" id="ci" class="form-control form-control-lg" name="ci" required />
-                    <label class="form-label" for="form3Example4">Número de CI</label>
-                  </div>
+    <div class="form-outline mb-4">
+        <textarea id="razon_busqueda" class="form-control" name="razon_busqueda" rows="3" required><?= old('razon_busqueda'); ?></textarea>
+        <label class="form-label" for="razon_busqueda">Razón de Búsqueda</label>
+    </div>
 
-                  
-
-                  <div data-mdb-input-init class="form-outline mb-4">
-                    <input type="text" value="<?=set_value('foto');?>" id="foto" class="form-control form-control-lg" name="foto" required />
-                    <label class="form-label" for="form3Example8">Foto</label>
-                  </div>
-
-                  
-
-                  <div data-mdb-input-init class="form-outline mb-4">
-                    <input type="text" value="<?=set_value('delitos');?>" id="delitos" class="form-control form-control-lg" name="delitos" required />
-                    <label class="form-label" for="user">Delitos</label>
-                  </div>
-
-                  <div data-mdb-input-init class="form-outline mb-4">
-                    <input type="text" value="<?=set_value('razon_busqueda');?>" id="razon_busqueda" class="form-control form-control-lg" name="razon_busqueda" required />
-                    <label class="form-label" for="user">Razon de la busqueda</label>
-                  </div>
-
-
-                  <div class="d-flex justify-content-end pt-3">
-
-                    <div class="col-12">
-                      <a href="<?= base_url('criminals')?>" class="btn btn-secondary">Regresar</a>
-                      <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning btn-lg ms-2">
-                          Registrar
-                      </button>
-                    </div>
-                    
-                  </div>
-                  
-                </form>
-
-                <?php if(session()->getFlashdata('errors')!==null):?>
-                    <div class="alert alert-danger my-3" role="alert">
-                        <?= session()->getFlashdata('errors');?>
-                    </div>
-                <?php endif;?>
-
-                
-
+    <div class="d-flex justify-content-end">
+        <a href="<?= base_url('criminals'); ?>" class="btn btn-secondary me-2">Regresar</a>
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </div>
+</form>
 
 <?= $this->endSection(); ?>

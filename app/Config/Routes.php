@@ -25,8 +25,8 @@ use CodeIgniter\Router\RouteCollection;
  $routes->post('password/reset', 'Users::resetPassword');
  
 
- $routes->get('upload','Galeria::index');
- $routes->post('upload','Galeria::subir');
+ //$routes->get('upload','Galeria::index');
+ //$routes->post('upload','Galeria::subir');
 
 
 //Rutas protegidas
@@ -36,8 +36,10 @@ use CodeIgniter\Router\RouteCollection;
 
     $routes->get('start', 'Dashboard::index');
     
-     $routes->resource('criminals', ['placeholder'=>'(:num)', 'except'=>'show']);
+    $routes->resource('criminals', ['placeholder'=>'(:num)', 'except'=>'show']);
      
  });
  
+
+
 

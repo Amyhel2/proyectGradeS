@@ -2,200 +2,144 @@
 
 namespace App\Controllers;
 
+use CodeIgniter\Files\File;
 use App\Controllers\BaseController;
 use App\Models\CriminalsModel;
 
 class Criminals extends BaseController
 {
-    /**
-     * Return an array of resource objects, themselves in array format.
-     *
-     * @return ResponseInterface
-     */
     public function index()
     {
-        //
-        $criminalModel= new CriminalsModel();
-
+        $criminalModel = new CriminalsModel();
         $data['criminales'] = $criminalModel->where('activo', 1)->findAll();
-
-        
         return view('criminals/index', $data);
     }
 
-    /**
-     * Return the properties of a resource object.
-     *
-     * @param int|string|null $id
-     *
-     * @return ResponseInterface
-     */
-    public function show($id = null)
-    {
-        //
-    }
-
-    /**
-     * Return a new resource object, with default properties.
-     *
-     * @return ResponseInterface
-     */
     public function new()
     {
-        //
         return view('criminals/newCriminal');
     }
 
-    /**
-     * Create a new resource object, from "posted" parameters.
-     *
-     * @return ResponseInterface
-     */
     public function create()
     {
-        //
         $rules = [
-            
             'nombre' => 'required|max_length[30]',
             'alias' => 'required|max_length[30]',
             'ci' => 'required|max_length[20]|is_unique[criminals.ci]',
-            //'foto' => 'required|max_length[30]',
             'delitos' => 'required|max_length[255]',
             'razon_busqueda' => 'required|max_length[255]',
-            
+            'foto' => 'uploaded[foto]|max_size[foto,1024]|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png]',
         ];
-    
+
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
         }
-    
+
         $criminalModel = new CriminalsModel();
-        
-        $post = $this->request->getPost([
-            'nombre', 'alias', 'ci', 'foto', 'delitos', 'razon_busqueda'
-        ]);
-    
-        $token = bin2hex(random_bytes(20));
-    
-        //Insercion de los valores del formulario a los campos de la base de datos
-    
+        $file = $this->request->getFile('foto');
+        $newName = $file->getRandomName();
+        $file->move('uploads/criminales', $newName);
+        $imageUrl = base_url('uploads/criminales/' . $newName);
+
         $criminalModel->insert([
-            
-            'nombre' => $post['nombre'],
-            
-            'alias' => $post['alias'],
-            'ci' => $post['ci'],
-            'foto' => $post['foto'],
-            'delitos' => $post['delitos'],
-            'razon_busqueda' => $post['razon_busqueda'],
-            
-            'activo' => 1
+            'nombre' => $this->request->getPost('nombre'),
+            'alias' => $this->request->getPost('alias'),
+            'ci' => $this->request->getPost('ci'),
+            'foto' => $imageUrl,
+            'delitos' => $this->request->getPost('delitos'),
+            'razon_busqueda' => $this->request->getPost('razon_busqueda'),
+            'activo' => 1,
         ]);
 
         return redirect()->route('criminals');
     }
 
-    /**
-     * Return the editable properties of a resource object.
-     *
-     * @param int|string|null $id
-     *
-     * @return ResponseInterface
-     */
     public function edit($idCriminal = null)
     {
-        //
-        if($idCriminal == null){
+        if ($idCriminal == null) {
             return redirect()->route('criminals');
         }
 
         $criminalModel = new CriminalsModel();
+        $data['criminal'] = $criminalModel->find($idCriminal);
 
-        $data['criminal']= $criminalModel->find($idCriminal);
-
-        return view('criminals/editCriminal',$data);
+        return view('criminals/editCriminal', $data);
     }
 
-    /**
-     * Add or update a model resource, from "posted" properties.
-     *
-     * @param int|string|null $id
-     *
-     * @return ResponseInterface
-     */
     public function update($idCriminal = null)
     {
-        //
-        if(!$this->request->is('PUT') || $idCriminal == null){
+        if (!$this->request->is('PUT') || $idCriminal == null) {
             return redirect()->route('criminals');
         }
 
         $rules = [
-            
             'nombre' => 'required|max_length[30]',
             'alias' => 'required|max_length[30]',
             'ci' => "required|max_length[20]|is_unique[criminals.ci,idCriminal,{$idCriminal}]",
-            //'foto' => 'required|max_length[30]',
             'delitos' => 'required|max_length[255]',
             'razon_busqueda' => 'required|max_length[255]',
-            
+            'foto' => 'max_size[foto,1024]|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png]',
         ];
-    
+
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
         }
 
-        $post = $this->request->getPost([
-            'nombre', 'alias', 'ci', 'foto', 'delitos', 'razon_busqueda','activo'
-        ]);
-    
-        
-
         $criminalModel = new CriminalsModel();
+        $criminal = $criminalModel->find($idCriminal);
 
-        $criminalModel->update($idCriminal, [
-            
-            'nombre' => $post['nombre'],
-            'alias' => $post['alias'],
-            'ci' => $post['ci'],
-            'foto' => $post['foto'],
-            'delitos' => $post['delitos'],
-            'razon_busqueda' => $post['razon_busqueda'],
-            'activo' => $post['activo']
-            
-        ]);
+        $data = [
+            'nombre' => $this->request->getPost('nombre'),
+            'alias' => $this->request->getPost('alias'),
+            'ci' => $this->request->getPost('ci'),
+            'delitos' => $this->request->getPost('delitos'),
+            'razon_busqueda' => $this->request->getPost('razon_busqueda'),
+            'activo' => $this->request->getPost('activo'),
+        ];
+
+        if ($this->request->getFile('foto')->isValid()) {
+            $file = $this->request->getFile('foto');
+            $newName = $file->getRandomName();
+            $file->move('uploads/criminales', $newName);
+            $imageUrl = base_url('uploads/criminales/' . $newName);
+            $data['foto'] = $imageUrl;
+            if (!empty($criminal['foto']) && file_exists(FCPATH . 'uploads/criminales/' . basename($criminal['foto']))) {
+                unlink(FCPATH . 'uploads/criminales/' . basename($criminal['foto']));
+            }
+        }
+
+        $criminalModel->update($idCriminal, $data);
 
         return redirect()->route('criminals');
     }
 
-    /**
-     * Delete the designated resource object from the model.
-     *
-     * @param int|string|null $id
-     *
-     * @return ResponseInterface
-     */
     public function delete($idCriminal = null)
     {
-        //
-        if (!$this->request->is('DELETE') || $idCriminal == null) {
+        if ($idCriminal == null) {
             return redirect()->route('criminals');
-    
         }
-    
+
         $criminalModel = new CriminalsModel();
+        $criminal = $criminalModel->find($idCriminal);
+
+        if (!empty($criminal['foto']) && file_exists(FCPATH . 'uploads/criminales/' . basename($criminal['foto']))) {
+            unlink(FCPATH . 'uploads/criminales/' . basename($criminal['foto']));
+        }
+
         $criminalModel->delete($idCriminal);
-    
-    
-        return redirect()->to('criminals');
+
+        return redirect()->route('criminals');
     }
 
-    public function softDelete($idCriminal)
-{
-    $criminalModel = new CriminalsModel();
-    $data = ['activo' => 0]; // Suponiendo que 'activo' es el campo que indica si el usuario está activo o no.
-    $criminalModel->update($idCriminal, $data);
+    public function softDelete($idCriminal = null)
+    {
+        if ($idCriminal == null) {
+            return redirect()->route('criminals');
+        }
 
-    return redirect()->to(base_url('criminals'))->with('message', 'Criminal desactivado correctamente.');
-}
+        $criminalModel = new CriminalsModel();
+        $criminalModel->update($idCriminal, ['activo' => 0]);
+
+        return redirect()->route('criminals');
+    }
 }
