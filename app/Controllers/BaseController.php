@@ -42,6 +42,7 @@ abstract class BaseController extends Controller
      * The creation of dynamic property is deprecated in PHP 8.2.
      */
     protected $session;
+    protected $userRole;
 
     /**
      * @return void
@@ -54,6 +55,6 @@ abstract class BaseController extends Controller
         // Preload any models, libraries, etc, here.
 
         $this->session = \Config\Services::session();
-        
+        $this->userRole = $this->session->get('role'); // Obtén el rol del usuario desde la sesión
     }
 }

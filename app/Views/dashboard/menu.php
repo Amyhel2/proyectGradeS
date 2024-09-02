@@ -1,7 +1,5 @@
 
 
-<!-- Main Sidebar Container -->
-
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
   <a href="../../index3.html" class="brand-link">
@@ -36,8 +34,8 @@
     <!-- Sidebar Menu -->
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
-
+        
+        <!-- Opción disponible para todos -->
         <li class="nav-item">
           <a href="<?= base_url('start'); ?>" class="nav-link">
             <i class="nav-icon fas fa-home"></i>
@@ -45,15 +43,13 @@
           </a>
         </li>
 
+        <!-- Opción solo para admin -->
+        <?php if(session('rol') == 'admin'): ?>
         <li class="nav-item">
           <a href="<?= base_url('user'); ?>" class="nav-link">
             <i class="nav-icon fas fa-users"></i>
-            <p>
-              Usuarios
-              <i class="right fas fa-angle-left"></i>
-            </p>
+            <p>Usuarios</p>
           </a>
-
           <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="<?= base_url('users');?>" class="nav-link">
@@ -67,12 +63,8 @@
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-user-secret"></i>
-            <p>
-              Criminales
-              <i class="right fas fa-angle-left"></i>
-            </p>
+            <p>Criminales</p>
           </a>
-
           <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="<?= base_url('criminals');?>" class="nav-link">
@@ -82,14 +74,14 @@
             </li>
           </ul>
         </li>
+        <?php endif; ?>
 
+        <!-- Opción para admin y user -->
+        <?php if(session('rol') == 'admin' || session('rol') == 'user'): ?>
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-chart-pie"></i>
-            <p>
-              Reportes
-              <i class="right fas fa-angle-left"></i>
-            </p>
+            <p>Reportes</p>
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
@@ -100,31 +92,16 @@
             </li>
           </ul>
         </li>
+        <?php endif; ?>
 
-        <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="nav-icon fas fa-table"></i>
-            <p>
-              Tablas
-              <i class="fas fa-angle-left right"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="../tables/simple.html" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Tablas Simples</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-
+        <!-- Otras opciones de menú, aplica lo mismo según los roles -->
         <li class="nav-item">
           <a href="https://adminlte.io/docs/3.1/" class="nav-link">
             <i class="nav-icon fas fa-file"></i>
             <p>Documentación</p>
           </a>
         </li>
+
       </ul>
     </nav>
     <!-- /.sidebar-menu -->
