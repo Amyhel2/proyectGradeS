@@ -6,8 +6,6 @@ use CodeIgniter\Database\Migration;
 
 class DetectionsTable extends Migration
 {
-    
-
     public function up()
     {
         $this->forge->addField([

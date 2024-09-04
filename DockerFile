@@ -1,0 +1,22 @@
+# Usamos una imagen oficial de Python
+FROM python:3.9-slim
+
+# Instalamos las dependencias necesarias
+RUN apt-get update && apt-get install -y \
+    cmake \
+    build-essential \
+    libgl1-mesa-glx \
+    libgtk2.0-dev
+
+# Instalamos las librerías Python necesarias
+RUN pip install --upgrade pip
+RUN pip install dlib face_recognition opencv-python
+
+# Creamos un directorio de trabajo
+WORKDIR /app
+
+# Copiamos el código de la aplicación al contenedor
+COPY . /app
+
+# Comando por defecto para ejecutar la aplicación
+CMD ["python", "app.py"]

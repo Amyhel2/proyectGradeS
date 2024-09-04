@@ -1,0 +1,13 @@
+.sidebar-dark-primary {
+    background-color: #343a40;
+}
+
+.nav-sidebar .nav-link.active {
+    background-color: #1e272e;
+    color: #ffffff;
+}
+
+.nav-sidebar .nav-link:hover {
+    background-color: #57606f;
+    color: #ffffff;
+}

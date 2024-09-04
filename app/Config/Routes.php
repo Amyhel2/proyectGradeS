@@ -40,6 +40,11 @@ use CodeIgniter\Router\RouteCollection;
      
  });
  
+ $routes->get('reportes', 'Reports::index');
+
+ $routes->post('camara/upload', 'CamaraController::upload');
 
 
+
+ 
 
