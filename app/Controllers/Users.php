@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\UsersModel;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class Users extends BaseController
 {
@@ -405,5 +407,32 @@ class Users extends BaseController
         return $this->showMessage('Ocurrio un error.','Por favor intenta de nuevo mas tarde.');
 
     }
+
+
+    public function generarReportePDF()
+{
+    // Obtener usuarios activos
+    $userModel = new UsersModel();
+    $usuarios = $userModel->where('activo', 1)->findAll();
+
+    // Cargar la vista con los datos
+    $data = [
+        'usuarios' => $usuarios,
+    ];
+
+    $html = view('reports/index', $data);
+
+    // Configurar Dompdf
+    $options = new Options();
+    $options->set('defaultFont', 'Arial');
+
+    $dompdf = new Dompdf($options);
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'landscape');
+    $dompdf->render();
+
+    // Enviar el PDF al navegador
+    $dompdf->stream('reporte_usuarios.pdf', ['Attachment' => false]);
+}
 
 }

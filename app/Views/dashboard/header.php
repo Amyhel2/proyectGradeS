@@ -17,50 +17,12 @@
   <!-- AdminLTE Theme style -->
   <link rel="stylesheet" href="<?php echo base_url();?>/assets/dist/css/adminlte.css">
 
-  
+  <!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
 
   <!-- Vincula tus estilos personalizados -->
-  <link rel="stylesheet" href="<?php echo base_url('assets/css/custom.css'); ?>">
+  <!--<link rel="stylesheet" href="<?php echo base_url('assets/css/custom.css'); ?>">-->
   
-  <style>
-    /* Custom Navbar Styles */
-    .navbar-light {
-      background-color: #3c8dbc;
-      color: #ffffff;
-    }
-    .navbar-light .nav-link {
-      color: #ffffff;
-    }
-    .navbar-light .navbar-nav .nav-link:hover {
-      background-color: #367fa9;
-    }
-
-    /* Navbar Icons Color */
-    .navbar-light .nav-icon {
-      color: #ffffff;
-    }
-    
-    /* Responsive Search Input */
-    .navbar-search-block .form-control-navbar {
-      width: 100%;
-    }
-
-    /* Custom Dropdown Styles */
-    .dropdown-menu-lg {
-      background-color: #f4f6f9;
-      border-radius: 5px;
-    }
-
-    /* Custom Footer */
-    .dropdown-footer {
-      background-color: #3c8dbc;
-      color: #ffffff;
-      text-align: center;
-    }
-    .dropdown-footer:hover {
-      background-color: #367fa9;
-    }
-  </style>
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -72,7 +34,7 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="../../index3.html" class="nav-link">Home</a>
+        <a href="<?php echo base_url('/home'); ?>" class="nav-link">Home</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Contact</a>
@@ -110,6 +72,7 @@
           <span class="badge badge-danger navbar-badge">3</span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <!-- Mensajes -->
           <a href="#" class="dropdown-item">
             <div class="media">
               <img src="<?php echo base_url();?>/assets/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
@@ -123,34 +86,7 @@
               </div>
             </div>
           </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <div class="media">
-              <img src="<?php echo base_url();?>/assets/dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  John Pierce
-                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">I got your message bro</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <div class="media">
-              <img src="<?php echo base_url();?>/assets/dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Nora Silvester
-                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">The subject goes here</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-          </a>
+          <!-- Más mensajes... -->
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
         </div>

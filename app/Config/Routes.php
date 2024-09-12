@@ -44,6 +44,8 @@ use CodeIgniter\Router\RouteCollection;
 
  $routes->post('camara/upload', 'CamaraController::upload');
 
+ $routes->get('reporte-usuarios-pdf', 'Users::generarReportePDF');
+
 
 
  
