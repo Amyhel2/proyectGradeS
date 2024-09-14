@@ -2,75 +2,83 @@
 
 <?= $this->section('content'); ?>
 
-<h3 class="my-3" id="titulo">Usuarios</h3>
+<div class="container">
+    <hr>
+    <div class="d-flex justify-content-between align-items-center my-3">
+        <h3  id="titulo">USUARIOS</h3>
+        <a href="<?= base_url('users/new')?>" class="btn btn-success">
+            <i class="fas fa-user-plus"></i> Agregar Usuario
+        </a>
+    </div>
 
-<a href="<?= base_url('users/new')?>" class="btn btn-success mb-3">Agregar</a>
-
-<div class="table-responsive">
-    <table id="usersTable" class="table table-hover table-bordered" aria-describedby="titulo">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Nombre Completo</th>
-                <th scope="col">CI</th>
-                <th scope="col">Rango</th>
-                <th scope="col">Número de Placa</th>
-                <th scope="col">Correo Electrónico</th>
-                <th scope="col">Celular</th>
-                <th scope="col">Fecha de Nacimiento</th>
-                <th scope="col">Sexo</th>
-                <th scope="col">Dirección</th>
-                <th scope="col">Tipo de Usuario</th>
-                <th scope="col">Activo</th>
-                <th scope="col">Opciones</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <?php foreach($usuarios as $usuario): ?>
-            <tr>
-                <td><?= $usuario['id']; ?></td>
-                <td><?= $usuario['nombres'] . ' ' . $usuario['apellido_paterno'] . ' ' . $usuario['apellido_materno']; ?></td>
-                <td><?= $usuario['ci']; ?></td>
-                <td><?= $usuario['rango']; ?></td>
-                <td><?= $usuario['numero_placa']; ?></td>
-                <td><?= $usuario['email']; ?></td>
-                <td><?= $usuario['celular']; ?></td>
-                <td><?= $usuario['fecha_nacimiento']; ?></td>
-                <td><?= $usuario['sexo'] == 'M' ? 'Masculino' : 'Femenino'; ?></td>
-                <td><?= $usuario['direccion']; ?></td>
-                <td><?= $usuario['tipo'] == 'admin' ? 'Admin' : 'Usuario'; ?></td>
-                <td><?= $usuario['activo'] == 1 ? 'Sí' : 'No'; ?></td>
-                
-                <td class="d-flex flex-column">
-                    <a href="<?= base_url('users/' . $usuario['id'] . '/edit'); ?>" class="btn btn-warning btn-sm mb-2">Editar</a>
-
-                    <button type="button" class="btn btn-danger btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#eliminaModal" data-bs-url="<?= base_url('users/' . $usuario['id']); ?>">Eliminacion física</button>
-
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#borradoLogicoModal" data-bs-url="<?= base_url('users/' . $usuario['id'] . '/soft-delete'); ?>">Eliminacion lógica</button>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="table-responsive shadow-lg p-3 bg-body rounded">
+        <table id="exampl" class="table table-striped table-hover table-sm" aria-describedby="titulo">
+            <thead class="bg-info table-dark text-center">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre Completo</th>
+                    <th>CI</th>
+                    <th>Rango</th>
+                    <th>Número de Placa</th>
+                    <th>Correo Electrónico</th>
+                    <th>Celular</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>Sexo</th>
+                    <th>Dirección</th>
+                    <th>Tipo de Usuario</th>
+                    <th>Activo</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($usuarios as $usuario): ?>
+                <tr class="text-center">
+                    <td><?= $usuario['id']; ?></td>
+                    <td><?= $usuario['nombres'] . ' ' . $usuario['apellido_paterno'] . ' ' . $usuario['apellido_materno']; ?></td>
+                    <td><?= $usuario['ci']; ?></td>
+                    <td><?= $usuario['rango']; ?></td>
+                    <td><?= $usuario['numero_placa']; ?></td>
+                    <td><?= $usuario['email']; ?></td>
+                    <td><?= $usuario['celular']; ?></td>
+                    <td><?= $usuario['fecha_nacimiento']; ?></td>
+                    <td><?= $usuario['sexo'] == 'M' ? 'Masculino' : 'Femenino'; ?></td>
+                    <td><?= $usuario['direccion']; ?></td>
+                    <td><?= $usuario['tipo'] == 'admin' ? 'Admin' : 'Usuario'; ?></td>
+                    <td><?= $usuario['activo'] == 1 ? '<span class="badge bg-success">Sí</span>' : '<span class="badge bg-danger">No</span>'; ?></td>
+                    <td class="d-flex justify-content-center">
+                        <a href="<?= base_url('users/' . $usuario['id'] . '/edit'); ?>" class="btn btn-warning btn-sm mx-1">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <button type="button" class="btn btn-danger btn-sm mx-1" data-bs-toggle="modal" data-bs-target="#eliminaModal" data-bs-url="<?= base_url('users/' . $usuario['id']); ?>">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm mx-1" data-bs-toggle="modal" data-bs-target="#borradoLogicoModal" data-bs-url="<?= base_url('users/' . $usuario['id'] . '/soft-delete'); ?>">
+                            <i class="fas fa-user-slash"></i> Inactivar
+                        </button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Modal de eliminación física -->
 <div class="modal fade" id="eliminaModal" tabindex="-1" aria-labelledby="eliminaModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="eliminaModalLabel">Aviso</h1>
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="eliminaModalLabel">Eliminar Usuario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>¿Desea eliminar definitivamente este registro de la base de datos?</p>
+                <p>¿Desea eliminar definitivamente este registro?</p>
             </div>
             <div class="modal-footer">
                 <form id="form-elimina" action="" method="POST">
                     <?= csrf_field(); ?>
                     <input type="hidden" name="_method" value="DELETE">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-danger">Eliminar</button>
                 </form>
             </div>
@@ -80,20 +88,20 @@
 
 <!-- Modal de eliminación lógica -->
 <div class="modal fade" id="borradoLogicoModal" tabindex="-1" aria-labelledby="borradoLogicoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="borradoLogicoModalLabel">Aviso</h1>
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="borradoLogicoModalLabel">Inactivar Usuario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>¿Desea deshabilitar este registro?</p>
+                <p>¿Desea inactivar este usuario?</p>
             </div>
             <div class="modal-footer">
                 <form id="form-borrado-logico" action="" method="POST">
                     <?= csrf_field(); ?>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-warning">Borrar Lógicamente</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">Inactivar</button>
                 </form>
             </div>
         </div>
@@ -139,4 +147,3 @@ $(document).ready(function() {
 </script>
 
 <?= $this->endSection(); ?>
-

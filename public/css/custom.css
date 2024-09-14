@@ -1,13 +1,111 @@
-.sidebar-dark-primary {
-    background-color: #343a40;
-}
+/* Nuevos estilos de menú y header */
 
-.nav-sidebar .nav-link.active {
-    background-color: #1e272e;
-    color: #ffffff;
-}
-
-.nav-sidebar .nav-link:hover {
-    background-color: #57606f;
-    color: #ffffff;
-}
+/* Estilos Custom para el Sidebar */
+.main-sidebar {
+    background-color:#2a2a62; /* Color de fondo del menú lateral (gris oscuro) */
+    color: #ffffff; /* Color del texto */
+  }
+  
+  /* Estilo para el logo del menú lateral */
+  .brand-link {
+    background-color: rgb(64, 61, 57); /* Color de fondo del logo (azul)hsla(216, 90%, 31%, 0.819) */
+    color: #ffffff; /* Color del texto del logo */
+  }
+  
+  .brand-link .brand-image {
+    border-radius: 50%;
+    border: 2px solid #ffffff; /* Borde blanco alrededor del logo */
+  }
+  
+  /* Color del texto normal en el menú lateral */
+  .main-sidebar .nav-link {
+    color: white; /* Color del texto */
+  }
+  
+  /* Color del enlace cuando está activo (seleccionado) */
+  .main-sidebar .nav-link.active,
+  .main-sidebar .nav-link.active .nav-icon {
+    background-color: hwb(61 7% 7%); /* Color de fondo del enlace activo (azul) */
+    color: #ffffff !important; /* Color del texto del enlace activo (blanco) */
+  }
+  
+  /* Asegurar que los subenlaces también cambien de color cuando son seleccionados */
+  .main-sidebar .nav-treeview .nav-link.active {
+    background-color: #0056b3; /* Fondo más oscuro para los subenlaces activos */
+    color: #ffffff !important; /* Color del texto de los subenlaces activos (blanco) */
+  }
+  
+  /* Color del texto en los enlaces del menú al hacer hover */
+  .main-sidebar .nav-link:hover {
+    background-color: #0056b3; /* Color de fondo al hacer hover en los enlaces (azul oscuro) */
+    color: #ffffff; /* Color del texto al hacer hover (blanco) */
+  }
+  
+  /* Color del texto e íconos en los submenús (nav-treeview) */
+  .main-sidebar .nav-treeview .nav-link {
+    color: #d0dccf; /* Color del texto en los subenlaces normales */
+  }
+  
+  .main-sidebar .nav-treeview .nav-link:hover {
+    color: #972525; /* Color del texto de los subenlaces al hacer hover (blanco) */
+  }
+  
+  /* Estilos Custom para el Navbar */
+  .navbar-light {
+    background-color:#2a2a62; /* Color de fondo del header (gris oscuro)#2a2a62 */
+    color: #ffffff; /* Color del texto del header */
+  }
+  
+  /* Forzar el color de los enlaces en el navbar a blanco */
+  .navbar-light .nav-link {
+    color: #ffffff !important; /* Color del texto de los enlaces en el header */
+  }
+  
+  .navbar-light .navbar-nav .nav-link:hover {
+    background-color: #0056b3; /* Color de fondo al hacer hover en los enlaces del header (azul oscuro) */
+    color: #c2f624da !important; /* Color del texto al hacer hover (blanco) */
+  }
+  
+  /* Color de los íconos del Navbar */
+  .navbar-light .nav-icon {
+    color: #ffffff; /* Color de los íconos en el header */
+  }
+  
+  /* Input de búsqueda en el Navbar */
+  .navbar-search-block .form-control-navbar {
+    width: 100%; /* Hace que el input sea responsive */
+  }
+  
+  /* Estilos Custom para el Dropdown */
+  .dropdown-menu-lg {
+    background-color: #ffffff; /* Color de fondo del dropdown */
+    border-radius: 5px; /* Bordes redondeados */
+  }
+  
+  .dropdown-footer {
+    background-color: #1e1e2d; /* Fondo del footer en el dropdown (gris oscuro) */
+    color: #ffffff; /* Color del texto del footer en el dropdown */
+    text-align: center; /* Texto centrado */
+  }
+  
+  .dropdown-footer:hover {
+    background-color: #0056b3; /* Fondo al hacer hover en el footer del dropdown (azul oscuro) */
+  }
+  
+  /* Color de los enlaces dentro del user-panel */
+  .main-sidebar .user-panel .info a {
+    color: #ffffff !important; /* Color blanco para el nombre de usuario */
+  }
+  
+  .main-sidebar .user-panel .info a:hover {
+    color: #cfd8dc !important; /* Color gris claro al hacer hover sobre el nombre */
+  }
+  
+  /* Color de los íconos de usuario */
+  .main-sidebar .user-panel .image img {
+    border: 2px solid #ffffff; /* Borde blanco alrededor de la imagen de perfil */
+  }
+  
+  .enlace-a a:hover{
+    color: #c4d813 !important; /* Color gris claro al hacer hover sobre el nombre */
+  }
