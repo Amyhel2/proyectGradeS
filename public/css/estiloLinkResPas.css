@@ -1,0 +1,37 @@
+
+html,body{
+background-image: url('../img/morning.jpg');
+/*background-color:rgba(252, 239, 239, 0.8);*/
+background-size: 100% 100%;
+background-repeat: no-repeat;
+height: 100%;
+font-family: 'Numans', sans-serif;
+}
+.card {
+    background: rgba(247, 243, 243, 0.9); /* Color de fondo con 50% de opacidad */
+}
+
+    .btn-primary {
+        background-color: #1c0e74; /* Color azul para el botón */
+        border-color: #2e12e7;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .btn-primary:hover {
+        background-color: #2584e9; /* Color azul oscuro al pasar el ratón */
+        border-color: #2584e9;
+    }
+    .alert-danger {
+        border-radius: .375rem; /* Bordes redondeados para la alerta */
+    }
+    .form-control {
+        border-radius: .375rem; /* Bordes redondeados para los campos de entrada */
+        box-shadow: none; /* Eliminar sombra por defecto */
+    }
+
+    .card-footer{
+        background:rgb(174, 108, 33) ;
+    }
+
+    .ac {
+        color: aliceblue;
+    }

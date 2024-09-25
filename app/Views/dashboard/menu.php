@@ -13,7 +13,7 @@
         <img src="<?php echo base_url('assets/dist/img/user2-160x160.jpg'); ?>" class="img-circle elevation-2" alt="User Image">
       </div>
       <div class="info">
-        <a href="#" class="d-block"><?php echo esc(session('username')); ?></a>
+        <a href="<?= base_url('password-change'); ?>" class="d-block"><?php echo esc(session('username')); ?></a>
       </div>
     </div>
 
@@ -45,6 +45,22 @@
           </a>
         </li>
         <?php endif; ?>
+
+        <!-- Añadir las opciones en el menú lateral -->
+<li class="nav-item">
+    <a href="<?= base_url('detections'); ?>" class="nav-link">
+        <i class="nav-icon fas fa-eye"></i>
+        <p>Ver Detecciones</p>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a href="<?= base_url('notifications'); ?>" class="nav-link">
+        <i class="nav-icon fas fa-bell"></i>
+        <p>Ver Notificaciones</p>
+    </a>
+</li>
+
 
         <!-- Opción para admin y user -->
         <?php if(session('rol') == 'admin' || session('rol') == 'user'): ?>

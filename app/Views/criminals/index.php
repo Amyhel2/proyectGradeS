@@ -35,12 +35,13 @@
                     <td><?= esc($criminal['alias']); ?></td>
                     <td><?= esc($criminal['ci']); ?></td>
                     <td>
-                        <?php if (!empty($criminal['foto'])): ?>
-                            <img src="<?= esc($criminal['foto']); ?>" alt="<?= esc($criminal['nombre']); ?>" class="img-thumbnail" width="100">
-                        <?php else: ?>
-                            <img src="<?= base_url('images/perfil.jpg'); ?>" alt="Foto por defecto" class="img-thumbnail" width="100">
-                        <?php endif; ?>
-                    </td>
+    <?php if (!empty($criminal['foto'])): ?>
+        <img src="<?= esc($criminal['foto']); ?>" alt="<?= esc($criminal['nombre']); ?>" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+    <?php else: ?>
+        <img src="<?= base_url('images/perfil.jpg'); ?>" alt="Foto por defecto" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+    <?php endif; ?>
+</td>
+
                     <td><?= esc($criminal['delitos']); ?></td>
                     <td><?= esc($criminal['razon_busqueda']); ?></td>
                     <td><?= $criminal['activo'] == 1 ? '<span class="badge bg-success">Sí</span>' : '<span class="badge bg-danger">No</span>'; ?></td>

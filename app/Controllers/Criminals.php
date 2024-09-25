@@ -28,7 +28,7 @@ class Criminals extends BaseController
         'ci' => 'required|max_length[20]|is_unique[criminals.ci]',
         'delitos' => 'required|max_length[255]',
         'razon_busqueda' => 'required|max_length[255]',
-        'foto' => 'uploaded[foto]|max_size[foto,1024]|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png]',
+        'foto' => 'uploaded[foto]|max_size[foto,1024]|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png,image/webp]',
     ];
 
     if (!$this->validate($rules)) {
@@ -36,6 +36,21 @@ class Criminals extends BaseController
     }
 
     $criminalModel = new CriminalsModel();
+
+    // Primero insertamos el criminal sin la foto
+    $criminalData = [
+        'nombre' => $this->request->getPost('nombre'),
+        'alias' => $this->request->getPost('alias'),
+        'ci' => $this->request->getPost('ci'),
+        'delitos' => $this->request->getPost('delitos'),
+        'razon_busqueda' => $this->request->getPost('razon_busqueda'),
+        'activo' => 1,
+    ];
+
+    $criminalModel->insert($criminalData);
+    $idCriminal = $criminalModel->getInsertID(); // Obtenemos el ID del criminal recién insertado
+
+    // Ahora manejamos la foto
     $file = $this->request->getFile('foto');
     
     // Obtener el nombre del criminal desde el formulario
@@ -44,25 +59,19 @@ class Criminals extends BaseController
     // Limpiar el nombre para que sea seguro usarlo en un archivo
     $nombreCriminal = preg_replace('/[^a-zA-Z0-9_-]/', '_', $nombreCriminal);
     
-    // Generar un nombre de archivo que incluya el nombre del criminal y un nombre aleatorio
-    $newName = $nombreCriminal . '_' . $file->getRandomName();
+    // Generar un nombre de archivo que incluya el ID del criminal y un nombre aleatorio
+    $newName = $idCriminal . '_' . $nombreCriminal . '_' . $file->getRandomName();
     
     // Mover el archivo a la carpeta de destino
     $file->move('uploads/criminales', $newName);
     $imageUrl = base_url('uploads/criminales/' . $newName);
 
-    $criminalModel->insert([
-        'nombre' => $this->request->getPost('nombre'),
-        'alias' => $this->request->getPost('alias'),
-        'ci' => $this->request->getPost('ci'),
-        'foto' => $imageUrl,
-        'delitos' => $this->request->getPost('delitos'),
-        'razon_busqueda' => $this->request->getPost('razon_busqueda'),
-        'activo' => 1,
-    ]);
+    // Actualizamos la foto del criminal
+    $criminalModel->update($idCriminal, ['foto' => $imageUrl]);
 
     return redirect()->route('criminals');
 }
+
 
 
     public function edit($idCriminal = null)
@@ -89,7 +98,7 @@ class Criminals extends BaseController
         'ci' => "required|max_length[20]|is_unique[criminals.ci,idCriminal,{$idCriminal}]",
         'delitos' => 'required|max_length[255]',
         'razon_busqueda' => 'required|max_length[255]',
-        'foto' => 'max_size[foto,1024]|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png]',
+        'foto' => 'max_size[foto,1024]|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png,image/webp]',
     ];
 
     if (!$this->validate($rules)) {
@@ -110,26 +119,27 @@ class Criminals extends BaseController
 
     if ($this->request->getFile('foto')->isValid()) {
         $file = $this->request->getFile('foto');
-
+    
         // Obtener el nombre del criminal desde el formulario
         $nombreCriminal = $this->request->getPost('nombre');
         
         // Limpiar el nombre para que sea seguro usarlo en un archivo
         $nombreCriminal = preg_replace('/[^a-zA-Z0-9_-]/', '_', $nombreCriminal);
         
-        // Generar un nombre de archivo que incluya el nombre del criminal y un nombre aleatorio
-        $newName = $nombreCriminal . '_' . $file->getRandomName();
+        // Generar un nombre de archivo que incluya el ID del criminal y un nombre aleatorio
+        $newName = $idCriminal . '_' . $nombreCriminal . '_' . $file->getRandomName();
         
         // Mover el archivo a la carpeta de destino
         $file->move('uploads/criminales', $newName);
         $imageUrl = base_url('uploads/criminales/' . $newName);
         $data['foto'] = $imageUrl;
-
+    
         // Eliminar la imagen anterior si existe
         if (!empty($criminal['foto']) && file_exists(FCPATH . 'uploads/criminales/' . basename($criminal['foto']))) {
             unlink(FCPATH . 'uploads/criminales/' . basename($criminal['foto']));
         }
     }
+    
 
     $criminalModel->update($idCriminal, $data);
 

@@ -6,7 +6,7 @@
   <div class="content-wrapper ">
        
       <?php echo $this->renderSection('content');?>
-
+      
   </div>
   <!-- /.content-wrapper -->
 

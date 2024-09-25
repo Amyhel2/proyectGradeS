@@ -1,41 +1,64 @@
 import cv2
-import requests
+import face_recognition
 import os
+import numpy as np
 
-# Cargar la imagen capturada y comparar con imágenes de la base de datos
-def comparar_imagenes(imagen_capturada, rutas_imagenes_crud):
-    img_capturada = cv2.imread(imagen_capturada, cv2.IMREAD_GRAYSCALE)
-    
-    # Verificar si la imagen fue cargada correctamente
-    if img_capturada is None:
-        print(f"No se pudo cargar la imagen capturada: {imagen_capturada}")
-        return
-    
-    # Cargar imágenes del CRUD y comparar
-    for ruta in rutas_imagenes_crud:
-        for root, dirs, files in os.walk(ruta):
-            for file in files:
-                # Obtener la ruta completa de la imagen en CRUD
-                img_path = os.path.join(root, file)
-                
-                # Cargar la imagen para comparar
-                img_comparar = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-                
-                # Verificar si la imagen fue cargada correctamente
-                if img_comparar is None:
-                    print(f"No se pudo cargar la imagen del CRUD: {img_path}")
-                    continue
-                
-                # Comparar las dos imágenes
-                res = cv2.matchTemplate(img_capturada, img_comparar, cv2.TM_CCOEFF_NORMED)
-                min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+# Directorio donde están almacenadas las imágenes de criminales
+criminals_dir = 'uploads/criminales'
 
-                # Verificar si la similitud supera el umbral
-                if max_val > 0.8:  # Umbral de similitud
-                    print(f"Coincidencia encontrada con {img_path} (Similitud: {max_val:.2f})")
-                    return  # Terminar la búsqueda si se encuentra una coincidencia
+def cargar_imagenes_criminales():
+    criminal_encodings = []
+    criminal_names = []
 
-    print("No se encontró ninguna coincidencia.")
+    # Cargar las imágenes de criminales
+    for file_name in os.listdir(criminals_dir):
+        image_path = os.path.join(criminals_dir, file_name)
+        image = face_recognition.load_image_file(image_path)
 
-# Llamar a la función comparar_imagenes
-comparar_imagenes('/upload/imagen_capturada.jpg', ['/ruta/a/imagenes/criminales', '/ruta/a/otra_carpeta'])
+        # Obtener los 'encodings' faciales de la imagen
+        encoding = face_recognition.face_encodings(image)
+
+        if len(encoding) > 0:
+            criminal_encodings.append(encoding[0])
+            criminal_names.append(os.path.splitext(file_name)[0])  # Usar el nombre sin la extensión
+
+    return criminal_encodings, criminal_names
+
+def comparar_imagen(imagen_capturada_path, tolerancia=0.6):
+    # Cargar la imagen capturada
+    imagen_capturada = face_recognition.load_image_file(imagen_capturada_path)
+    encoding_capturado = face_recognition.face_encodings(imagen_capturada)
+
+    if len(encoding_capturado) == 0:
+        print("No se encontró un rostro en la imagen capturada.")
+        return None
+
+    encoding_capturado = encoding_capturado[0]
+
+    # Cargar los encodings de criminales
+    criminal_encodings, criminal_names = cargar_imagenes_criminales()
+
+    # Comparar la imagen capturada con cada criminal (incluyendo tolerancia)
+    resultados = face_recognition.compare_faces(criminal_encodings, encoding_capturado, tolerancia)
+
+    # Obtener las distancias de similitud para mayor precisión
+    distancias = face_recognition.face_distance(criminal_encodings, encoding_capturado)
+
+    # Si se encuentra una coincidencia
+    if True in resultados:
+        # Obtener el índice de la coincidencia con la menor distancia
+        mejor_match_index = np.argmin(distancias)
+        print(f"¡Criminal identificado: {criminal_names[mejor_match_index]}!")
+        return criminal_names[mejor_match_index]  # Retorna el nombre del archivo o ID del criminal
+    else:
+        print("No se encontró coincidencia.")
+        return None
+
+# Ejemplo de uso:
+imagen_capturada_path = 'uploads/recibidas/received_image.jpg'
+criminal_identificado = comparar_imagen(imagen_capturada_path)
+
+if criminal_identificado:
+    print(f"¡Alerta! El criminal {criminal_identificado} ha sido identificado.")
+else:
+    print("No se ha identificado ningún criminal.")

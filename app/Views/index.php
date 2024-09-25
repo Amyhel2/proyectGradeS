@@ -2,10 +2,6 @@
 
 <?= $this->section('content'); ?>
 
-
-
-
-<!-- Content Header (Page header) -->
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -15,136 +11,204 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item active">
-                        <?php echo date('Y/m/d H:i:s'); ?>
+                        <?= date('Y/m/d H:i:s'); ?>
                     </li>
                 </ol>
             </div>
         </div>
-    </div><!-- /.container-fluid -->
+    </div>
 </section>
 
-<!-- Main content -->
+<?php if(session()->get('success')): ?>
+    <div class="alert alert-success">
+        <?= session()->get('success') ?>
+    </div>
+<?php endif; ?>
+
 <section class="content">
-      <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
+    <div class="container-fluid">
         <div class="row">
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-info">
-              <div class="inner">
-                <h3>150</h3>
-
-                <p>New Orders</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-bag"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-success">
-              <div class="inner">
-                <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-                <p>Bounce Rate</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-stats-bars"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-warning">
-              <div class="inner">
-                <h3>44</h3>
-
-                <p>User Registrations</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-person-add"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-danger">
-              <div class="inner">
-                <h3>65</h3>
-
-                <p>Unique Visitors</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-        </div>
-        <!-- /.row -->
-        <!-- Main row -->
-        <div class="row">
-          <!-- Left col -->
-          
-          <!-- right col (We are only adding the ID to make the widgets sortable)-->
-          <section class="col-lg-5 connectedSortable">
-
-        
-
-            <!-- Calendar -->
-            <div class="card bg-gradient-success">
-              <div class="card-header border-0">
-
-                <h3 class="card-title">
-                  <i class="far fa-calendar-alt"></i>
-                  Calendar
-                </h3>
-                <!-- tools card -->
-                <div class="card-tools">
-                  <!-- button with a dropdown -->
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52">
-                      <i class="fas fa-bars"></i>
-                    </button>
-                    <div class="dropdown-menu" role="menu">
-                      <a href="#" class="dropdown-item">Add new event</a>
-                      <a href="#" class="dropdown-item">Clear events</a>
-                      <div class="dropdown-divider"></div>
-                      <a href="#" class="dropdown-item">View calendar</a>
+            <!-- Criminales Registrados -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3><?= esc($totalCriminales); ?></h3>
+                        <p>Criminales Registrados</p>
                     </div>
-                  </div>
-                  <button type="button" class="btn btn-success btn-sm" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-success btn-sm" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
+                    <div class="icon">
+                        <i class="ion ion-person"></i>
+                    </div>
+                    <a href="<?= base_url('criminals'); ?>" class="small-box-footer">Ver más <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
-                <!-- /. tools -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body pt-0">
-                <!--The calendar -->
-                <div id="calendar" style="width: 100%"></div>
-              </div>
-              <!-- /.card-body -->
             </div>
-            <!-- /.card -->
-          </section>
-          <!-- right col -->
+            <!-- Detecciones Realizadas -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3><?= esc($totalDetecciones); ?></h3>
+                        <p>Detecciones Realizadas</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-eye"></i>
+                    </div>
+                    <a href="<?= base_url('detections'); ?>" class="small-box-footer">Ver más <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- Notificaciones Enviadas -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3><?= esc($totalNotificaciones); ?></h3>
+                        <p>Notificaciones Enviadas</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-notifications"></i>
+                    </div>
+                    <a href="<?= base_url('notifications'); ?>" class="small-box-footer">Ver más <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- Oficiales Registrados -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3><?= esc($totalOficiales); ?></h3>
+                        <p>Oficiales Registrados</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+                    <a href="<?= base_url('users'); ?>" class="small-box-footer">Ver más <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
         </div>
-        <!-- /.row (main row) -->
-        <a href="<?= base_url('logout'); ?>" class="btn btn-primary mt-4">Cerrar sesión</a>
-      </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
 
-    <?= $this->endSection(); ?>
+        <!-- Sección de Gráficos -->
+        <div class="row">
+            <!-- Detecciones por Mes -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Detecciones por Mes</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="deteccionesPorMes"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Criminales por Tipo -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Criminales por Tipo</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="criminalesPorTipo"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notificaciones Enviadas y Leídas + Actividad Reciente -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Notificaciones Enviadas y Leídas</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="notificacionesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actividad Reciente -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Actividad Reciente</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <?php foreach($actividadesRecientes as $actividad): ?>
+                                <li><?= esc($actividad['mensaje']); ?> - <?= esc($actividad['fecha']); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón de Cerrar Sesión -->
+    <div class="container-fluid text-center mt-4">
+        <a href="<?= base_url('logout'); ?>" class="btn btn-primary">Cerrar sesión</a>
+    </div>
+</section>
+
+<?= $this->endSection(); ?>
+
+
+
+<!-- Scripts para los gráficos -->
+<?= $this->section('script'); ?>
+
+<script>
+    var ctx = document.getElementById('deteccionesPorMes').getContext('2d');
+    var deteccionesPorMesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            datasets: [{
+                label: 'Detecciones',
+                data: <?= json_encode(array_column($deteccionesPorMes, 'total')); ?>,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+    var ctx = document.getElementById('criminalesPorTipo').getContext('2d');
+    var criminalesPorTipoChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: <?= json_encode(array_column($criminalesPorTipo, 'tipo')); ?>,
+            datasets: [{
+                label: 'Criminales',
+                data: <?= json_encode(array_column($criminalesPorTipo, 'total')); ?>,
+                backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+                borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
+                borderWidth: 1
+            }]
+        }
+    });
+</script>
+
+<script>
+    var ctx = document.getElementById('notificacionesChart').getContext('2d');
+    var notificacionesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Enviadas', 'Leídas'],
+            datasets: [{
+                label: 'Notificaciones',
+                data: <?= json_encode(array_column($notificacionesEnviadasLeidas, 'total')); ?>,
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        }
+    });
+</script>
+
+<?= $this->endSection(); ?>

@@ -1,6 +1,9 @@
 <!-- jQuery -->
 <script src="<?php echo base_url();?>/assets/plugins/jquery/jquery.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 <!-- Bootstrap Bundle (usa Bootstrap 5 o 4, dependiendo de tu proyecto) -->
 <script src="<?php echo base_url() ?>/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 

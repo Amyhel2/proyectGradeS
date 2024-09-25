@@ -2,33 +2,24 @@
 <?= $this->extend('layout/templateStart'); ?>
 
 <?= $this->section('content'); ?>
-<h2>Reporte de Usuarios Activos</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Usuario</th>
-                <th>Nombres</th>
-                <th>Apellido Paterno</th>
-                <th>Email</th>
-                <th>Rango</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach($usuarios as $usuario): ?>
-            <tr>
-                <td><?= $usuario['id']; ?></td>
-                <td><?= $usuario['user']; ?></td>
-                <td><?= $usuario['nombres']; ?></td>
-                <td><?= $usuario['apellido_paterno']; ?></td>
-                <td><?= $usuario['email']; ?></td>
-                <td><?= $usuario['rango']; ?></td>
-                <td><?= $usuario['activo'] ? 'Activo' : 'Inactivo'; ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+
+<div class="container mt-5">
+    <h2>Reporte Detallado del Criminal Detectado</h2>
+    <hr>
+    <div class="row">
+        
+        <div class="col-md-8">
+            <h3><?= esc($criminal['nombre']); ?> (Alias: <?= esc($criminal['alias']); ?>)</h3>
+            <p><strong>CI:</strong> <?= esc($criminal['ci']); ?></p>
+            <p><strong>Delitos:</strong> <?= esc($criminal['delitos']); ?></p>
+            <p><strong>Razón de Búsqueda:</strong> <?= esc($criminal['razon_busqueda']); ?></p>
+            <p><strong>Fecha de Detección:</strong> <?= esc($deteccion['fecha_deteccion']); ?></p>
+            <p><strong>Ubicación:</strong> <?= esc($deteccion['ubicacion']); ?></p>
+            <p><strong>Oficial:</strong> <?= esc($oficial['nombre']); ?></p>
+        </div>
+    </div>
+</div>
+
 
 
 <?= $this->endSection(); ?>

@@ -122,8 +122,8 @@
         </div>
 
         <div class="d-flex justify-content-end mt-5">
-          <a href="<?= base_url('users') ?>" class="btn btn-secondary">Regresar</a>
-          <button type="submit" class="btn btn-primary ms-3">Registrar</button>
+          <a href="<?= base_url('users') ?>" class="btn btn-warning mx-1">Regresar</a>
+          <button type="submit" class="btn btn-success  mx-1">Registrar</button>
         </div>
       </form>
 

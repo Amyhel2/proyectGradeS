@@ -10,7 +10,11 @@ use CodeIgniter\Router\RouteCollection;
  $routes->get('/', 'Login::index');
  $routes->post('auth', 'Login::auth');
  $routes->get('logout', 'Login::logout');
- 
+ $routes->post('change-password', 'Login::updatePassword'); // Cambiar la contraseña
+ $routes->get('password-change', 'Login::changePassword');
+
+
+
 //Ruta para la eliminacion logica usuarios
  $routes->post('users/(:num)/soft-delete', 'Users::softDelete/$1');
 
@@ -25,9 +29,6 @@ use CodeIgniter\Router\RouteCollection;
  $routes->post('password/reset', 'Users::resetPassword');
  
 
- //$routes->get('upload','Galeria::index');
- //$routes->post('upload','Galeria::subir');
-
 
 //Rutas protegidas
  $routes->group('/', ['filter'=>'auth'], function($routes){
@@ -35,18 +36,29 @@ use CodeIgniter\Router\RouteCollection;
     $routes->resource('users', ['placeholder'=>'(:num)', 'except'=>'show']);
 
     $routes->get('start', 'Dashboard::index');
+
+    $routes->get('detections', 'Detections::index');
+
+    $routes->get('notifications', 'Notifications::index');
+
+    $routes->get('reporte-usuarios-pdf', 'Users::generarReportePDF');
     
     $routes->resource('criminals', ['placeholder'=>'(:num)', 'except'=>'show']);
+
+    $routes->get('head', 'Dashboard::header'); 
      
  });
- 
+ // Ruta para ver el detalle de una notificación y marcarla como leída
+$routes->get('dashboard/detalleNotificacion/(:num)', 'Dashboard::detalleNotificacion/$1');
+ $routes->get('reports/detalleCriminal/(:num)', 'Reports::detalleCriminal/$1');
+
  $routes->get('reportes', 'Reports::index');
 
  $routes->post('camara/upload', 'CamaraController::upload');
 
- $routes->get('reporte-usuarios-pdf', 'Users::generarReportePDF');
+ 
 
-
+ $routes->post('api/notify-criminal', 'Notifications::recibir');
 
  
 

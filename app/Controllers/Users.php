@@ -67,7 +67,7 @@ class Users extends BaseController
     public function create()
 {
     $rules = [
-        'user' => 'required|max_length[30]|is_unique[users.user]',
+        'user' => 'required|min_length[6]|max_length[30]|is_unique[users.user]',
         'password' => 'required|min_length[8]|max_length[255]|is_unique[users.password]',
         'repassword' => 'matches[password]',
         'nombres' => 'required|max_length[30]',
@@ -298,7 +298,7 @@ class Users extends BaseController
 
         }
 
-        return $this->showMessage('Ocurrio un errror.','Por favor intenta nuevamente mas tarde.');
+        return $this->showMessage('Ocurrio un error.','Por favor intenta nuevamente mas tarde.');
     }
 
     public function linkRequestForm(){
@@ -324,7 +324,7 @@ class Users extends BaseController
         if($user){
             $token = bin2hex(random_bytes(20));
             $expiresAt=new \DateTime();
-            $expiresAt->modify('+3 hour');
+            $expiresAt->modify('+1 hour');
             $userModel->update($user['id'],[
                 
                 'token_reinicio'=>$token,

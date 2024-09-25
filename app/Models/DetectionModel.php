@@ -4,16 +4,16 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class CriminalsModel extends Model
+class DetectionModel extends Model
 {
-    protected $table            = 'criminals';
-    protected $primaryKey       = 'idCriminal';
+    protected $table            = 'detections';
+    protected $primaryKey       = 'idDeteccion';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields = [
-        'nombre','alias', 'ci', 'foto', 'delitos', 'razon_busqueda', 'activo'
+        'criminal_id', 'oficial_id', 'fecha_deteccion', 'ubicacion', 'confianza'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -47,15 +47,21 @@ class CriminalsModel extends Model
     protected $afterDelete    = [];*/
 
 
-    public function getCriminalesPorTipo()
+    public function getDeteccionesPorMes()
     {
-        // Contar los criminales agrupados por tipo de delito
-        return $this->select('delitos as tipo, COUNT(idCriminal) as total')
-                    ->groupBy('tipo')
+        // Contar las detecciones agrupadas por mes
+        return $this->select('MONTH(fecha_deteccion) as mes, COUNT(idDeteccion) as total')
+                    ->groupBy('mes')
                     ->findAll();
     }
 
-    
+    public function getActividadesRecientes()
+    {
+        // Recuperar las últimas 5 actividades (detecciones recientes)
+        return $this->orderBy('fecha_deteccion', 'DESC')
+                    ->limit(5)
+                    ->findAll();
+    }
 }
 
 

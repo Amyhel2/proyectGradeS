@@ -1,16 +1,14 @@
-# Usamos una imagen oficial de Python
 FROM python:3.9-slim
 
-# Instalamos las dependencias necesarias
+# Instalamos las dependencias necesarias para dlib, OpenCV y requests
 RUN apt-get update && apt-get install -y \
     cmake \
     build-essential \
     libgl1-mesa-glx \
-    libgtk2.0-dev
-
-# Instalamos las librerías Python necesarias
-RUN pip install --upgrade pip
-RUN pip install dlib face_recognition opencv-python
+    libgtk2.0-dev && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip install --upgrade pip && \
+    pip install flask dlib face_recognition opencv-python requests
 
 # Creamos un directorio de trabajo
 WORKDIR /app
@@ -18,5 +16,8 @@ WORKDIR /app
 # Copiamos el código de la aplicación al contenedor
 COPY . /app
 
+# Exponer el puerto 5000
+EXPOSE 5000
+
 # Comando por defecto para ejecutar la aplicación
-CMD ["python", "app.py"]
+CMD ["python", "flask_api/app.py"]

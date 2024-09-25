@@ -4,17 +4,19 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class CriminalsModel extends Model
+class NotificationModel extends Model
 {
-    protected $table            = 'criminals';
-    protected $primaryKey       = 'idCriminal';
+    protected $table            = 'notifications';
+    protected $primaryKey       = 'idNotificacion';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields = [
-        'nombre','alias', 'ci', 'foto', 'delitos', 'razon_busqueda', 'activo'
+        'deteccion_id', 'oficial_id', 'mensaje', 'fecha_envio', 'estado'
     ];
+
+    
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -45,17 +47,26 @@ class CriminalsModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];*/
-
-
-    public function getCriminalesPorTipo()
+    public function getNotificacionesEnviadasLeidas()
     {
-        // Contar los criminales agrupados por tipo de delito
-        return $this->select('delitos as tipo, COUNT(idCriminal) as total')
-                    ->groupBy('tipo')
+        // Contar las notificaciones enviadas y leídas
+        return $this->select('estado, COUNT(idNotificacion) as total')
+                    ->groupBy('estado')
                     ->findAll();
     }
 
-    
+    public function contarNotificacionesNoLeidas($oficialId)
+    {
+        return $this->where('oficial_id', $oficialId)
+                    ->where('estado', 'enviada')
+                    ->countAllResults();
+    }
+
+    // Método para actualizar el estado de una notificación a 'leída'
+    public function marcarComoLeida($notificacionId)
+    {
+        return $this->update($notificacionId, ['estado' => 'leida']);
+    }
 }
 
 

@@ -2,81 +2,107 @@
 
 <?= $this->section('content'); ?>
 
-<h3 class="my-3">Modificar Criminal</h3>
+<div class="container">
+  <hr>
+  <div class="d-flex justify-content-between align-items-center my-3">
+    <h3 id="titulo">MODIFICAR CRIMINAL</h3>
+  </div>
 
-<?php if (session()->getFlashdata('error')): ?>
-    <div class="alert alert-danger">
-        <?= session()->getFlashdata('error'); ?>
+  <!-- Card del formulario -->
+  <div class="card shadow-lg">
+    <div class="card-body p-5">
+
+      <!-- Mensaje de error -->
+      <?php if (session()->getFlashdata('error')): ?>
+        <div class="alert alert-danger">
+          <?= session()->getFlashdata('error'); ?>
+        </div>
+      <?php endif; ?>
+
+      <!-- Formulario -->
+      <form method="POST" action="<?= base_url('criminals/' . $criminal['idCriminal']); ?>" enctype="multipart/form-data" class="mx-auto">
+        <input type="hidden" name="_method" value="PUT">
+        <input type="hidden" name="id" value="<?= esc($criminal['idCriminal']); ?>">
+
+        <?= csrf_field(); ?>
+
+        <div class="row g-4">
+          <!-- Columna izquierda -->
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombres</label>
+              <input type="text" value="<?= esc($criminal['nombre']); ?>" id="nombre" class="form-control" name="nombre" required />
+            </div>
+
+            <div class="mb-3">
+              <label for="alias" class="form-label">Alias</label>
+              <input type="text" value="<?= esc($criminal['alias']); ?>" id="alias" class="form-control" name="alias" required />
+            </div>
+
+            <div class="mb-3">
+              <label for="ci" class="form-label">Número de CI</label>
+              <input type="text" value="<?= esc($criminal['ci']); ?>" id="ci" class="form-control" name="ci" required />
+            </div>
+
+            <!-- Mostrar la imagen actual de forma más presentable -->
+<?php if (!empty($criminal['foto'])) : ?>
+    <div class="mb-3 text-center">
+        <label class="form-label">Foto Actual:</label>
+        <div class="d-flex justify-content-center">
+            <img src="<?= esc($criminal['foto']) ?>" 
+                 alt="Foto de <?= esc($criminal['nombre']) ?>" 
+                 class="rounded img-thumbnail shadow-sm" 
+                 style="max-width: 200px; object-fit: cover;">
+        </div>
     </div>
 <?php endif; ?>
 
-<form method="POST" action="<?= base_url('criminals/' . $criminal['idCriminal']); ?>" enctype="multipart/form-data">
-    <input type="hidden" name="_method" value="PUT">
-    <input type="hidden" name="id" value="<?= esc($criminal['idCriminal']); ?>">
 
-    <?= csrf_field(); ?>
+            <!-- Campo para subir una nueva foto -->
+            <div class="mb-3">
+              <label for="foto" class="form-label">Nueva Foto (opcional)</label>
+              <input type="file" id="foto" class="form-control" name="foto" />
+            </div>
+          </div>
 
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input type="text" value="<?= esc($criminal['nombre']); ?>" id="nombre" class="form-control form-control-lg" name="nombre" required />
-        <label class="form-label" for="nombre">Nombres</label>
-    </div>
+          <!-- Columna derecha -->
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="delitos" class="form-label">Delitos</label>
+              <input type="text" value="<?= esc($criminal['delitos']); ?>" id="delitos" class="form-control" name="delitos" required />
+            </div>
 
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input type="text" value="<?= esc($criminal['alias']); ?>" id="alias" class="form-control form-control-lg" name="alias" required />
-        <label class="form-label" for="alias">Alias</label>
-    </div>
+            <div class="mb-3">
+              <label for="razon_busqueda" class="form-label">Razón de la búsqueda</label>
+              <input type="text" value="<?= esc($criminal['razon_busqueda']); ?>" id="razon_busqueda" class="form-control" name="razon_busqueda" required />
+            </div>
 
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input type="text" value="<?= esc($criminal['ci']); ?>" id="ci" class="form-control form-control-lg" name="ci" required />
-        <label class="form-label" for="ci">Número de CI</label>
-    </div>
-
-    <!-- Sección de la foto actual -->
-    <div data-mdb-input-init class="form-outline mb-4">
-        <label class="form-label" for="foto_actual">Foto Actual</label>
-        <div>
-            <img src="<?= base_url('images/' . esc($criminal['foto'])); ?>" alt="Foto actual" width="150">
+            <div class="mb-3">
+              <label for="activo" class="form-label">Activo</label>
+              <select id="activo" class="form-select" name="activo" required>
+                <option value="1" <?= $criminal['activo'] == 1 ? 'selected' : ''; ?>>Sí</option>
+                <option value="0" <?= $criminal['activo'] == 0 ? 'selected' : ''; ?>>No</option>
+              </select>
+            </div>
+          </div>
         </div>
-    </div>
 
-    <!-- Campo para subir una nueva foto -->
-    <div data-mdb-input-init class="form-outline mb-4">
-        <label class="form-label" for="foto">Nueva Foto (opcional)</label>
-        <input type="file" id="foto" class="form-control form-control-lg" name="foto" />
-    </div>
-
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input type="text" value="<?= esc($criminal['delitos']); ?>" id="delitos" class="form-control form-control-lg" name="delitos" required />
-        <label class="form-label" for="delitos">Delitos</label>
-    </div>
-
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input type="text" value="<?= esc($criminal['razon_busqueda']); ?>" id="razon_busqueda" class="form-control form-control-lg" name="razon_busqueda" required />
-        <label class="form-label" for="razon_busqueda">Razón de la búsqueda</label>
-    </div>
-
-    <div data-mdb-input-init class="form-outline mb-4">
-        <label class="form-label" for="activo">Activo</label>
-        <select id="activo" class="form-control form-control-lg" name="activo" required>
-            <option value="1" <?= $criminal['activo'] == 1 ? 'selected' : ''; ?>>Sí</option>
-            <option value="0" <?= $criminal['activo'] == 0 ? 'selected' : ''; ?>>No</option>
-        </select>
-    </div>
-
-    <div class="d-flex justify-content-end pt-3">
-        <div class="col-12">
-            <a href="<?= base_url('criminals') ?>" class="btn btn-secondary">Regresar</a>
-            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning btn-lg ms-2">
-                Guardar
-            </button>
+        <div class="d-flex justify-content-end mt-5">
+          <a href="<?= base_url('criminals') ?>" class="btn btn-warning mx-1">Regresar</a>
+          <button type="submit" class="btn btn-success mx-1">Guardar</button>
         </div>
-    </div>
-</form>
+      </form>
 
-<?php if (session()->getFlashdata('error')): ?>
-    <div class="alert alert-danger my-3" role="alert">
-        <?= session()->getFlashdata('error'); ?>
+      <!-- Errores adicionales -->
+      <?php if (session()->getFlashdata('errors')): ?>
+        <div class="alert alert-danger my-3" role="alert">
+          <?= session()->getFlashdata('errors'); ?>
+        </div>
+      <?php endif; ?>
+
     </div>
-<?php endif; ?>
+  </div>
+</div>
 
 <?= $this->endSection(); ?>
+
