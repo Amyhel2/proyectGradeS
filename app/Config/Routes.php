@@ -60,5 +60,6 @@ $routes->get('dashboard/detalleNotificacion/(:num)', 'Dashboard::detalleNotifica
 
  $routes->post('api/notify-criminal', 'Notifications::recibir');
 
- 
+ $routes->post('detectar/almacenarDeteccion/(:any)', 'Detections::almacenarDeteccion/$1');
+
 

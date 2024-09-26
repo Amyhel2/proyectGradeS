@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
 import face_recognition
 import os
+import requests  # Importa la biblioteca requests para hacer la solicitud HTTP
 
 app = Flask(__name__)
 
 # Ruta donde están las imágenes de los criminales
 RUTA_CRIMINALES = 'C:/xampp/htdocs/proyectGradeS/public/uploads/criminales/'  # Asegúrate de que esta ruta es correcta
+URL_API_DETECCIONES = 'http://localhost/proyectGradeS/public/detectar/almacenarDeteccion/'  # Cambia esto a la URL de tu API en CodeIgniter
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -22,6 +24,13 @@ def upload_file():
         resultado = comparar_imagen_con_base('received_image.jpg')
 
         if resultado:
+            # Si se detecta un criminal, realiza la inserción en la base de datos
+            response = requests.post(URL_API_DETECCIONES + resultado)  # Envía el ID del criminal detectado
+            if response.status_code == 200:
+                print("Detección almacenada correctamente.")
+            else:
+                print("Error al almacenar la detección:", response.text)
+
             return jsonify({
                 "message": "File received and criminal detected",
                 "criminal_detected": True,
@@ -84,3 +93,4 @@ def comparar_imagen_con_base(imagen_recibida):
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
+
