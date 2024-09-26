@@ -5,8 +5,7 @@ import os
 app = Flask(__name__)
 
 # Ruta donde están las imágenes de los criminales
-RUTA_CRIMINALES = 'C:/xampp/htdocs/proyectGradeS/public/uploads/criminales/'
-
+RUTA_CRIMINALES = 'C:/xampp/htdocs/proyectGradeS/public/uploads/criminales/'  # Asegúrate de que esta ruta es correcta
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -56,10 +55,15 @@ def comparar_imagen_con_base(imagen_recibida):
         # Comparar con cada imagen de criminal almacenada
         for archivo in os.listdir(RUTA_CRIMINALES):
             ruta_criminal = os.path.join(RUTA_CRIMINALES, archivo)
+            
+            # Imprimir el nombre del archivo de la imagen del criminal que se está accediendo
+            print(f"Accediendo a la imagen del criminal: {archivo}")
+
             imagen_criminal = face_recognition.load_image_file(ruta_criminal)
             encoding_criminal = face_recognition.face_encodings(imagen_criminal)
 
             if not encoding_criminal:
+                print(f"No se encontró encoding en la imagen: {archivo}")
                 continue
 
             encoding_criminal = encoding_criminal[0]
@@ -69,8 +73,10 @@ def comparar_imagen_con_base(imagen_recibida):
 
             if coincidencia[0]:
                 nombre_criminal = archivo.split(".")[0]  # Asume que el nombre del archivo es el nombre del criminal
+                print(f"¡Coincidencia encontrada con: {nombre_criminal}!")
                 return nombre_criminal
 
+        print("No se encontró ningún criminal coincidente.")
         return None
     except Exception as e:
         print("Error en la comparación de imágenes:", str(e))
