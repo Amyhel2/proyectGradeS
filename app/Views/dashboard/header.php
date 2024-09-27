@@ -95,29 +95,7 @@
 
       
 
-      <li class="nav-item dropdown">
-    <a  class="nav-link" data-toggle="dropdown" href="<?= base_url('head'); ?>"
-        <i class="far fa-bell"></i>
-        <!-- Badge para mostrar la cantidad de notificaciones no leídas -->
-        <span class="badge badge-warning navbar-badge">
-        <?=  esc($cantidadNotificacionesNoLeidas); ?></span>
-    </a>
-    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-        <span class="dropdown-header"><?= esc($cantidadNotificacionesNoLeidas); ?> Notificaciones</span>
-        <div class="dropdown-divider"></div>
-        
-        <!-- Lista de notificaciones -->
-        <?php foreach($notificaciones as $notificacion): ?>
-            <a href="<?= base_url('dashboard/detalleNotificacion/' . $notificacion['id']); ?>" class="dropdown-item">
-                <i class="fas fa-user-secret mr-2"></i> <?= esc($notificacion['mensaje']); ?>
-                <span class="float-right text-muted text-sm"><?= esc($notificacion['fecha_envio']); ?></span>
-            </a>
-        <?php endforeach; ?>
 
-        <div class="dropdown-divider"></div>
-        <a href="<?= base_url('notificaciones'); ?>" class="dropdown-item dropdown-footer">Ver todas las notificaciones</a>
-    </div>
-</li>
 
 
 

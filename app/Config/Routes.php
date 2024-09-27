@@ -37,7 +37,8 @@ use CodeIgniter\Router\RouteCollection;
 
     $routes->get('start', 'Dashboard::index');
 
-    $routes->get('detections', 'Detections::index');
+    $routes->resource('gafas', ['placeholder'=>'(:num)', 'except'=>'show']);
+
 
     $routes->get('notifications', 'Notifications::index');
 
@@ -54,12 +55,15 @@ $routes->get('dashboard/detalleNotificacion/(:num)', 'Dashboard::detalleNotifica
 
  $routes->get('reportes', 'Reports::index');
 
- $routes->post('camara/upload', 'CamaraController::upload');
+ //$routes->post('camara/upload', 'CamaraController::upload');
 
- 
+ $routes->get('detections', 'Detections::index');
 
  $routes->post('api/notify-criminal', 'Notifications::recibir');
 
  $routes->post('detectar/almacenarDeteccion/(:any)', 'Detections::almacenarDeteccion/$1');
+
+
+ $routes->post('gafas/registrar', 'Gafas::registrar');
 
 

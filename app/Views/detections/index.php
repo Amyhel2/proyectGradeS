@@ -19,17 +19,18 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($detecciones as $deteccion): ?>
-                <tr class="text-center">
-                    <td><?= $deteccion['id']; ?></td>
-                    <td><?= esc($deteccion['criminal_id']); ?></td>
-                    <td><?= esc($deteccion['oficial_id']); ?></td>
-                    <td><?= esc($deteccion['fecha_deteccion']); ?></td>
-                    <td><?= esc($deteccion['ubicacion']); ?></td>
-                    <td><?= esc($deteccion['confianza']); ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
+    <?php foreach($detecciones as $deteccion): ?>
+    <tr class="text-center">
+        <td><?= esc($deteccion['idDeteccion']); ?></td>
+        <td><?= esc($deteccion['criminal_nombre']); ?></td> <!-- Muestra el nombre del criminal -->
+        <td><?= esc($deteccion['oficial_id']); ?></td>
+        <td><?= esc($deteccion['fecha_deteccion']); ?></td>
+        <td><?= esc($deteccion['ubicacion']); ?></td>
+        <td><?= esc($deteccion['confianza']); ?></td>
+    </tr>
+    <?php endforeach; ?>
+</tbody>
+ 
         </table>
     </div>
 </div>

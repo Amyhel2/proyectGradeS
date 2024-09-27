@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import face_recognition
 import os
-import requests  # Importa la biblioteca requests para hacer la solicitud HTTP
+import requests
 
 app = Flask(__name__)
 
@@ -14,6 +14,10 @@ def upload_file():
     if not request.data:
         return jsonify({"error": "No file part"}), 400
 
+    # Obtener el ID del dispositivo de la cabecera correcta
+    device_id = request.headers.get('Device-ID') 
+    print(f"ID del dispositivo: {device_id}")
+
     try:
         # Guarda el archivo recibido
         with open('received_image.jpg', 'wb') as f:
@@ -24,8 +28,10 @@ def upload_file():
         resultado = comparar_imagen_con_base('received_image.jpg')
 
         if resultado:
-            # Si se detecta un criminal, realiza la inserción en la base de datos
-            response = requests.post(URL_API_DETECCIONES + resultado)  # Envía el ID del criminal detectado
+            criminal_id = resultado.split("_")[0]  # Extrae el ID del criminal
+            response = requests.post(f"{URL_API_DETECCIONES}{criminal_id}/{device_id}")
+
+
             if response.status_code == 200:
                 print("Detección almacenada correctamente.")
             else:
@@ -34,17 +40,20 @@ def upload_file():
             return jsonify({
                 "message": "File received and criminal detected",
                 "criminal_detected": True,
-                "nombre_criminal": resultado
+                "nombre_criminal": resultado,
+                "device_id": device_id  # Incluye el ID del dispositivo en la respuesta
             }), 200
         else:
             return jsonify({
                 "message": "File received but no criminal detected",
-                "criminal_detected": False
+                "criminal_detected": False,
+                "device_id": device_id  # Incluye el ID del dispositivo en la respuesta
             }), 200
 
     except Exception as e:
         print("Error al procesar el archivo:", str(e))
         return jsonify({"error": "Failed to process file"}), 500
+
 
 def comparar_imagen_con_base(imagen_recibida):
     """
@@ -83,7 +92,7 @@ def comparar_imagen_con_base(imagen_recibida):
             if coincidencia[0]:
                 nombre_criminal = archivo.split(".")[0]  # Asume que el nombre del archivo es el nombre del criminal
                 print(f"¡Coincidencia encontrada con: {nombre_criminal}!")
-                return nombre_criminal
+                return nombre_criminal  # Devuelve el nombre del criminal
 
         print("No se encontró ningún criminal coincidente.")
         return None
@@ -93,4 +102,3 @@ def comparar_imagen_con_base(imagen_recibida):
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
-

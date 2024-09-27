@@ -122,21 +122,7 @@
                 </div>
             </div>
 
-            <!-- Actividad Reciente -->
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Actividad Reciente</h3>
-                    </div>
-                    <div class="card-body">
-                        <ul>
-                            <?php foreach($actividadesRecientes as $actividad): ?>
-                                <li><?= esc($actividad['mensaje']); ?> - <?= esc($actividad['fecha']); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
 

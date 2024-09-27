@@ -46,6 +46,13 @@
         </li>
         <?php endif; ?>
 
+<li class="nav-item">
+    <a href="<?= base_url('gafas'); ?>" class="nav-link">
+        <i class="nav-icon fas fa-eye"></i>
+        <p>Gestion de dispositivos</p>
+    </a>
+</li>
+
         <!-- Añadir las opciones en el menú lateral -->
 <li class="nav-item">
     <a href="<?= base_url('detections'); ?>" class="nav-link">
