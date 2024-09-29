@@ -13,7 +13,7 @@ class DetectionModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields = [
-        'criminal_id', 'oficial_id', 'fecha_deteccion', 'ubicacion', 'confianza'
+        'criminal_id', 'oficial_id', 'ubicacion', 'confianza','fecha_deteccion'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -25,8 +25,8 @@ class DetectionModel extends Model
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
-    protected $createdField  = 'creado_en';
-    protected $updatedField  = 'actualizado_en';
+    protected $createdField  = 'fecha_det';
+    protected $updatedField  = null;
     /*protected $deletedField  = 'deleted_at';
 
     // Validation

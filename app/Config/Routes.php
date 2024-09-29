@@ -67,3 +67,4 @@ $routes->get('dashboard/detalleNotificacion/(:num)', 'Dashboard::detalleNotifica
  $routes->post('gafas/registrar', 'Gafas::registrar');
 
 
+ $routes->get('get_csrf_token', 'Security::get_csrf_token');

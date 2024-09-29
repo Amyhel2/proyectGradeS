@@ -23,7 +23,7 @@ class CriminalsModel extends Model
     protected array $castHandlers = [];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'creado_en';
     protected $updatedField  = 'actualizado_en';

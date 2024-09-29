@@ -13,7 +13,7 @@ class NotificationModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields = [
-        'deteccion_id', 'oficial_id', 'mensaje', 'fecha_envio', 'estado'
+        'deteccion_id', 'oficial_id', 'mensaje', 'estado','fecha_envio'
     ];
 
     
@@ -27,8 +27,8 @@ class NotificationModel extends Model
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
-    protected $createdField  = 'creado_en';
-    protected $updatedField  = 'actualizado_en';
+    protected $createdField  = 'fecha_en';
+    protected $updatedField  = null;
     /*protected $deletedField  = 'deleted_at';
 
     // Validation

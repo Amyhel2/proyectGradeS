@@ -24,7 +24,7 @@ class Dashboard extends BaseController
         $data['totalCriminales'] = $criminalModel->countAllResults();
         $data['totalDetecciones'] = $detectionModel->countAllResults();
         $data['totalNotificaciones'] = $notificationModel->countAllResults();
-        $data['totalOficiales'] = $userModel->where('tipo', 'user')->countAllResults();
+        $data['totalOficiales'] = $userModel->countAllResults();
 
         // Obtener las detecciones por mes
         $data['deteccionesPorMes'] = $detectionModel->getDeteccionesPorMes(); // Implementar en el modelo DetectionModel

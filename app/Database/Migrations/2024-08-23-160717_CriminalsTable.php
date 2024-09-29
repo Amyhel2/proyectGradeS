@@ -46,6 +46,12 @@ class CriminalsTable extends Migration
                 'constraint' => '255',
                 'null' => false,
             ],
+            'activo' => [
+                'type' => 'TINYINT',
+                'constraint' => 1,
+                'default' => 1,
+                'null' => false,
+            ],
             'creado_en' => [
                 'type' => 'DATETIME',
                 'null' => true,
@@ -54,12 +60,7 @@ class CriminalsTable extends Migration
                 'type' => 'DATETIME',
                 'null' => true,
             ],
-            'activo' => [
-                'type' => 'TINYINT',
-                'constraint' => 1,
-                'default' => 1,
-                'null' => false,
-            ]
+            
         ]);
         $this->forge->addKey('idCriminal', true);  // Definir como clave primaria
         $this->forge->createTable('criminals');
