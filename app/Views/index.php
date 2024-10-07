@@ -1,7 +1,7 @@
 <?php echo $this->extend('layout/templateStart'); ?>
 
 <?= $this->section('content'); ?>
-
+<div class="container">
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -83,71 +83,78 @@
         </div>
 
         <!-- Sección de Gráficos -->
-        <div class="row">
-            <!-- Detecciones por Mes -->
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Detecciones por Mes</h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="deteccionesPorMes"></canvas>
-                    </div>
-                </div>
+<div class="row">
+    <!-- Primera columna con dos gráficos (detecciones y notificaciones) -->
+    <div class="col-lg-6 d-flex flex-column">
+        <!-- Gráfico de Detecciones por Mes -->
+        <div class="card mb-4 flex-grow-1"> <!-- flex-grow-1 asegura que las tarjetas crezcan igualmente -->
+            <div class="card-header">
+                <h3 class="card-title">Detecciones por Mes</h3>
             </div>
-
-            <!-- Criminales por Tipo -->
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Criminales por Tipo</h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="criminalesPorTipo"></canvas>
-                    </div>
-                </div>
+            <div class="card-body">
+                <canvas id="deteccionesPorMes"></canvas>
             </div>
         </div>
 
-        <!-- Notificaciones Enviadas y Leídas + Actividad Reciente -->
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Notificaciones Enviadas y Leídas</h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="notificacionesChart"></canvas>
-                    </div>
-                </div>
+        <!-- Gráfico de Notificaciones Enviadas y Leídas -->
+        <div class="card flex-grow-1">
+            <div class="card-header">
+                <h3 class="card-title">Notificaciones Enviadas y Leídas</h3>
             </div>
-
-            
+            <div class="card-body">
+                <canvas id="notificacionesChart"></canvas>
+            </div>
         </div>
+    </div>
+
+    <!-- Segunda columna con el gráfico de Criminales por Tipo que ocupa el alto de las dos filas -->
+    <div class="col-lg-6">
+        <div class="card h-100"> <!-- h-100 asegura que la tarjeta ocupe el 100% de la altura -->
+            <div class="card-header">
+                <h3 class="card-title">Criminales por Tipo</h3>
+            </div>
+            <div class="card-body">
+                <canvas id="criminalesPorTipo"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
     </div>
 
     <!-- Botón de Cerrar Sesión -->
     <div class="container-fluid text-center mt-4">
         <a href="<?= base_url('logout'); ?>" class="btn btn-primary">Cerrar sesión</a>
     </div>
+    <br>
 </section>
+</div>
 
 <?= $this->endSection(); ?>
-
 
 
 <!-- Scripts para los gráficos -->
 <?= $this->section('script'); ?>
 
 <script>
+    var deteccionesPorMes = <?= json_encode($deteccionesPorMes); ?>;
+    var labels = [];
+    var data = [];
+
+    deteccionesPorMes.forEach(function(deteccion) {
+        // Crear un array con las etiquetas de los meses y los datos de detecciones
+        labels.push(getMonthName(deteccion.mes));  // Esta función convierte el número del mes en su nombre
+        data.push(deteccion.total);
+    });
+
     var ctx = document.getElementById('deteccionesPorMes').getContext('2d');
     var deteccionesPorMesChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            labels: labels,  // Etiquetas dinámicas basadas en los meses detectados
             datasets: [{
                 label: 'Detecciones',
-                data: <?= json_encode(array_column($deteccionesPorMes, 'total')); ?>,
+                data: data,  // Datos dinámicos basados en las detecciones por mes
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
@@ -161,6 +168,12 @@
             }
         }
     });
+
+    // Función para convertir el número del mes en su nombre
+    function getMonthName(monthNumber) {
+        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        return monthNames[monthNumber - 1];  // Los meses van de 1 a 12
+    }
 </script>
 
 <script>

@@ -1,20 +1,16 @@
+<footer>
+</footer>
 <!-- jQuery -->
-<script src="<?php echo base_url();?>/assets/plugins/jquery/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-<!-- Bootstrap Bundle (usa Bootstrap 5 o 4, dependiendo de tu proyecto) -->
-<script src="<?php echo base_url() ?>/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap Bundle (incluye Popper) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 <!-- AdminLTE App -->
 <script src="<?php echo base_url();?>/assets/dist/js/adminlte.min.js"></script>
 
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- Demo scripts (si es necesario, aunque generalmente no es recomendable en producción) -->
-<script src="<?php echo base_url() ?>/assets/dist/js/demo.js"></script>
 
 <!-- DataTables & Plugins -->
 <script src="<?php echo base_url() ?>/assets/plugins/datatables/jquery.dataTables.min.js"></script>
@@ -33,15 +29,13 @@
 <!-- DataTables initialization -->
 <script>
   $(function () {
-    // Para la tabla #example1 con botones y control de columnas
     $("#example1").DataTable({
       "responsive": true,
       "lengthChange": false,
       "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"] // Añade colVis para controlar visibilidad
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
-    // Tabla #example2 básica sin botones
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,
@@ -56,3 +50,6 @@
 
 <!-- Sección de scripts personalizados -->
 <?php echo $this->renderSection('script'); ?>
+
+</body>
+</html>

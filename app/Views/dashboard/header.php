@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SISPRO</title>
 
-
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   
@@ -16,16 +15,14 @@
   <link rel="stylesheet" href="<?php echo base_url() ?>/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="<?php echo base_url() ?>/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="<?php echo base_url() ?>/assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-  <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
 
-   Bootstrap 5
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <!-- Bootstrap 4.5 -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   
   <!-- AdminLTE Theme style -->
   <link rel="stylesheet" href="<?php echo base_url();?>/assets/dist/css/adminlte.css">
 
   <link rel="stylesheet" href="<?php echo base_url();?>/css/custom.css">
-
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -39,7 +36,6 @@
       <li class="nav-item d-none d-sm-inline-block">
         <a href="<?php echo base_url('/start'); ?>" class="nav-link">Home</a>
       </li>
-      
     </ul>
 
     <!-- Right navbar links -->
@@ -87,18 +83,10 @@
               </div>
             </div>
           </a>
-          <!-- Más mensajes... -->
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
         </div>
       </li>
-
-      
-
-
-
-
-
 
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
@@ -113,8 +101,3 @@
     </ul>
   </nav>
   <!-- /.navbar -->
-
-  
-
-
- 

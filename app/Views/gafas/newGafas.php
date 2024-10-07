@@ -5,7 +5,7 @@
 <div class="container">
   <hr>
   <div class="d-flex justify-content-between align-items-center my-3">
-    <h3 id="titulo">AGREGAR NUEVA GAFAS</h3>
+    <h3 id="titulo">AGREGAR DISPOSITIVO</h3>
   </div>
 
   <!-- Card del formulario -->
@@ -35,6 +35,15 @@
               <label for="device_id" class="form-label">ID del Dispositivo</label>
               <input type="text" value="<?= old('device_id'); ?>" id="device_id" class="form-control" name="device_id" required />
             </div>
+
+            <div class="mb-3">
+    <label for="estado" class="form-label">Activo</label>
+    <select id="estado" class="form-select" name="activo" required>
+        <option value="1">Sí</option>
+        <option value="0">No</option>
+    </select>
+</div>
+
           </div>
         </div>
 

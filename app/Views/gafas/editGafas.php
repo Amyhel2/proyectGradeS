@@ -5,7 +5,7 @@
 <div class="container">
   <hr>
   <div class="d-flex justify-content-between align-items-center my-3">
-    <h3 id="titulo">MODIFICAR GAFAS</h3>
+    <h3 id="titulo">MODIFICAR DISPOSITIVO</h3>
   </div>
 
   <!-- Card del formulario -->

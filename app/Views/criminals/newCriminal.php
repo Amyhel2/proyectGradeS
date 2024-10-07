@@ -41,10 +41,11 @@
               <input type="text" value="<?= old('ci'); ?>" id="ci" class="form-control" name="ci" required />
             </div>
 
+            <!-- Fotos: múltiple selección -->
             <div class="mb-3">
-              <label for="foto" class="form-label">Foto</label>
-              <input type="file" id="foto" class="form-control" name="foto" required />
-              <small class="text-muted">Formatos permitidos: JPG, JPEG, PNG. Tamaño máximo: 2MB.</small>
+              <label for="foto" class="form-label">Fotos</label>
+              <input type="file" id="foto" class="form-control" name="fotos[]" multiple required />
+              <small class="text-muted">Formatos permitidos: JPG, JPEG, PNG. Tamaño máximo: 2MB por foto.</small>
             </div>
           </div>
 
@@ -59,6 +60,15 @@
               <label for="razon_busqueda" class="form-label">Razón de Búsqueda</label>
               <textarea id="razon_busqueda" class="form-control" name="razon_busqueda" rows="3" required><?= old('razon_busqueda'); ?></textarea>
             </div>
+
+            <div class="mb-3">
+    <label for="activo" class="form-label">Activo</label>
+    <select id="activo" class="form-select" name="activo" required>
+        <option value="1">Sí</option>
+        <option value="0">No</option>
+    </select>
+</div>
+
           </div>
         </div>
 

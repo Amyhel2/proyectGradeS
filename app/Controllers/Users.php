@@ -21,8 +21,10 @@ class Users extends BaseController
     public function index()
     {
         $userModel= new UsersModel();
-
+        
         $data['usuarios'] = $userModel->where('activo', 1)->findAll();
+        // Obtener solo los usuarios desactivados
+    $data['desactivados'] = $userModel->where('activo', 0)->findAll();
 
         return view('users/index', $data);
     }
@@ -188,7 +190,7 @@ class Users extends BaseController
 
         $rules = [
             //'user' => "required|max_length[30]|is_unique[users.user,id,{$id}]",
-            'password' => "required|min_length[8]|max_length[255]|is_unique[users.password,id,{$id}]",
+            //'password' => "required|min_length[8]|max_length[255]|is_unique[users.password,id,{$id}]",
             'nombres' => 'required|max_length[30]',
             'apellido_paterno' => 'required|max_length[30]',
             'apellido_materno' => 'required|max_length[30]',
@@ -208,7 +210,7 @@ class Users extends BaseController
         }
     
         $post = $this->request->getPost([
-            'password', 'nombres', 'apellido_paterno', 'apellido_materno', 'ci', 'rango', 
+            'nombres', 'apellido_paterno', 'apellido_materno', 'ci', 'rango', 
             'numero_placa', 'fecha_nacimiento', 'direccion', 'celular', 'email', 'tipo','activo'
         ]);
 
@@ -216,7 +218,9 @@ class Users extends BaseController
 
         $userModel->update($id, [
             //'user' => $post['user'],
-            'password' => $post['password'],
+            
+            //'password' => password_hash($post['password'], PASSWORD_DEFAULT),
+
             'nombres' => $post['nombres'],
             'apellido_paterno' => $post['apellido_paterno'],
             'apellido_materno' => $post['apellido_materno'],
@@ -246,29 +250,38 @@ class Users extends BaseController
 
 
 
+    
+
+
     public function delete($id = null)
     {
-    if (!$this->request->is('DELETE') || $id == null) {
-        return redirect()->route('users');
+        if ($id == null) {
+            return redirect()->route('users');
+        }
 
+        $userModel = new UsersModel();
+        
+        // Comprobar si la gafa existe antes de intentar eliminarla
+        $usuario = $userModel->find($id);
+        if (!$usuario) {
+            return redirect()->route('users')->with('error', 'El usuario no existe.');
+        }
+
+        $userModel->delete($id);
+
+        return redirect()->route('users')->with('success', 'Usuario eliminado correctamente.');
     }
 
-    $userModel = new UsersModel();
-    $userModel->delete($id);
-
-
-    return redirect()->to('users');
-    }
-
+    
 
     public function softDelete($id)
-{
-    $userModel = new UsersModel();
-    $data = ['activo' => 0]; // Suponiendo que 'activo' es el campo que indica si el usuario está activo o no.
-    $userModel->update($id, $data);
-
-    return redirect()->to(base_url('users'))->with('message', 'Usuario desactivado correctamente.');
-}
+    {
+        $userModel = new UsersModel();
+        $data = ['activo' => 0]; // Suponiendo que 'activo' es el campo que indica si el usuario está activo o no.
+        $userModel->update($id, $data);
+    
+        return redirect()->route('users')->with('success', 'Usuario desactivado correctamente.');
+    }
 
     /*Funciones extras*/
 
@@ -407,6 +420,34 @@ class Users extends BaseController
         return $this->showMessage('Ocurrio un error.','Por favor intenta de nuevo mas tarde.');
 
     }
+
+    
+
+    public function desactivados()
+    {
+        $model = new UsersModel();
+        // Obtener solo los usuarios inactivos
+        $data['desactivados'] = $model->where('activo', 0)->findAll();
+        
+        return view('users/desactivados', $data); // Asegúrate de crear esta vista
+    }
+    
+
+    public function reactivateUser($id)
+    {
+        $model = new UsersModel();
+        
+        // Cambiar el estado del usuario a activo
+        $data = [
+            'activo' => 1, // Cambia el campo 'activo' a 1
+        ];
+        
+        $model->update($id, $data);
+        
+        // Redirigir después de reactivar
+        return redirect()->to('/users')->with('success', 'Usuario reactivado correctamente.');
+    }
+
 
 
     public function generarReportePDF()

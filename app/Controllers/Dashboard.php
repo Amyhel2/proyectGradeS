@@ -48,6 +48,11 @@ class Dashboard extends BaseController
         return view('users/register');
     }
 
+    public function modales()
+    {
+        return view('gafas/message');
+    }
+
     // Método para ver el detalle de la notificación y marcarla como leída
     public function detalleNotificacion($notificacionId)
     {

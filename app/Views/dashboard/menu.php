@@ -48,8 +48,8 @@
 
 <li class="nav-item">
     <a href="<?= base_url('gafas'); ?>" class="nav-link">
-        <i class="nav-icon fas fa-eye"></i>
-        <p>Gestion de dispositivos</p>
+        <i class="nav-icon fas fa-glasses"></i>
+        <p>Dispositivos</p>
     </a>
 </li>
 
@@ -57,14 +57,14 @@
 <li class="nav-item">
     <a href="<?= base_url('detections'); ?>" class="nav-link">
         <i class="nav-icon fas fa-eye"></i>
-        <p>Ver Detecciones</p>
+        <p>Detecciones</p>
     </a>
 </li>
 
 <li class="nav-item">
     <a href="<?= base_url('notifications'); ?>" class="nav-link">
         <i class="nav-icon fas fa-bell"></i>
-        <p>Ver Notificaciones</p>
+        <p>Notificaciones</p>
     </a>
 </li>
 
@@ -72,7 +72,7 @@
         <!-- Opción para admin y user -->
         <?php if(session('rol') == 'admin' || session('rol') == 'user'): ?>
         <li class="nav-item">
-          <a href="<?= base_url('reporte-usuarios-pdf'); ?>" class="nav-link">
+          <a href="<?= base_url('reportes'); ?>" class="nav-link">
             <i class="nav-icon fas fa-chart-pie"></i>
             <p>Reportes</p>
           </a>

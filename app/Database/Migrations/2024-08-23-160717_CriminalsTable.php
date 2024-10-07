@@ -13,7 +13,7 @@ class CriminalsTable extends Migration
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
-                'auto_increment' => true
+                'auto_increment' => true,
             ],
             'nombre' => [
                 'type' => 'VARCHAR',
@@ -30,11 +30,6 @@ class CriminalsTable extends Migration
                 'constraint' => '20',
                 'null' => false,
                 'unique' => true,
-            ],
-            'foto' => [
-                'type' => 'VARCHAR',
-                'constraint' => '255',
-                'null' => false,
             ],
             'delitos' => [
                 'type' => 'VARCHAR',
@@ -54,15 +49,19 @@ class CriminalsTable extends Migration
             ],
             'creado_en' => [
                 'type' => 'DATETIME',
-                'null' => true,
+                'null' => false,
+                
             ],
             'actualizado_en' => [
                 'type' => 'DATETIME',
-                'null' => true,
+                'null' => false,
+                
             ],
-            
         ]);
-        $this->forge->addKey('idCriminal', true);  // Definir como clave primaria
+
+        // Agregar clave primaria
+        $this->forge->addKey('idCriminal', true); 
+        // Crear la tabla
         $this->forge->createTable('criminals');
     }
 

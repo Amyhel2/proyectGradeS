@@ -5,66 +5,57 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-//$routes->get('register', 'Dashboard::registro');
 
- $routes->get('/', 'Login::index');
- $routes->post('auth', 'Login::auth');
- $routes->get('logout', 'Login::logout');
- $routes->post('change-password', 'Login::updatePassword'); // Cambiar la contraseña
- $routes->get('password-change', 'Login::changePassword');
+// Rutas de autenticación
+$routes->get('/', 'Login::index');
+$routes->post('auth', 'Login::auth');
+$routes->get('logout', 'Login::logout');
+$routes->get('password-change', 'Login::changePassword');
+$routes->post('change-password', 'Login::updatePassword'); // Cambiar la contraseña
 
+// Rutas de gestión de usuarios
+$routes->post('users/(:num)/soft-delete', 'Users::softDelete/$1'); // Eliminación lógica de usuario
+$routes->post('users/(:num)/reactivate', 'Users::reactivateUser/$1', ['as' => 'users.reactivate']); // Reactivación de usuario
+$routes->get('activate-user/(:any)', 'Users::activateUser/$1'); // Activar usuario
+$routes->get('password-request', 'Users::linkRequestForm'); // Formulario de solicitud de cambio de contraseña
+$routes->post('password-email', 'Users::sendResetLinkEmail'); // Enviar enlace de restablecimiento
+$routes->get('password-reset/(:any)', 'Users::resetForm/$1'); // Formulario de restablecimiento de contraseña
+$routes->post('password/reset', 'Users::resetPassword'); // Procesar restablecimiento de contraseña
 
+// Rutas de gestión de gafas
+$routes->post('gafas/(:num)/soft-delete', 'Gafas::softDelete/$1'); // Eliminación lógica de gafas
+$routes->post('gafas/(:num)/habilitar', 'Gafas::habilitar/$1'); // Habilitar gafas
+$routes->post('gafas/registrar', 'Gafas::registrar'); // Registrar nuevas gafas
 
-//Ruta para la eliminacion logica usuarios
- $routes->post('users/(:num)/soft-delete', 'Users::softDelete/$1');
+// Rutas de gestión de criminales
+$routes->post('criminals/(:num)/soft-delete', 'Criminals::softDelete/$1'); // Eliminación lógica de criminal
+$routes->post('criminals/(:num)/habilitar', 'Criminals::habilitar/$1'); // Habilitar criminal
+$routes->get('criminals/(:num)/images', 'Criminals::mostrarFotos/$1'); // Ver imágenes de un criminal específico
 
- //Ruta para la eliminacion logica criminales
- $routes->post('criminals/(:num)/soft-delete', 'Criminals::softDelete/$1');
+// Rutas de detección y notificaciones
+$routes->get('detections', 'Detections::index'); // Ver todas las detecciones
+$routes->post('detectar/almacenarDeteccion/(:any)', 'Detections::almacenarDeteccion/$1'); // Almacenar detección
+$routes->get('dashboard/detalleNotificacion/(:num)', 'Dashboard::detalleNotificacion/$1'); // Ver detalle de notificación y marcar como leída
+$routes->get('notifications', 'Notifications::index'); // Ver todas las notificaciones
+$routes->post('api/notify-criminal', 'Notifications::recibir'); // API para recibir notificación de criminal detectado
 
-//Rutas de validacion o verificacion
- $routes->get('activate-user/(:any)', 'Users::activateUser/$1');
- $routes->get('password-request', 'Users::linkRequestForm');
- $routes->post('password-email', 'Users::sendResetLinkEmail');
- $routes->get('password-reset/(:any)', 'Users::resetForm/$1');
- $routes->post('password/reset', 'Users::resetPassword');
- 
+// Rutas de reportes
+$routes->get('reports/detalleCriminal/(:num)', 'Reports::detalleCriminal/$1'); // Ver detalle de un criminal en el reporte
+$routes->get('reportes', 'Reports::index'); // Ver todos los reportes
+$routes->get('reporte-usuarios-pdf', 'Users::generarReportePDF'); // Generar reporte PDF de usuarios
 
+// Rutas de seguridad y CSRF
+$routes->get('get_csrf_token', 'Security::get_csrf_token'); // Obtener token CSRF
 
-//Rutas protegidas
- $routes->group('/', ['filter'=>'auth'], function($routes){
+// Rutas adicionales
+$routes->get('init', 'Dashboard::modales'); // Inicializar vistas
+$routes->get('start', 'Dashboard::index'); // Página de inicio
+$routes->get('head', 'Dashboard::header'); // Cargar cabecera
 
-    $routes->resource('users', ['placeholder'=>'(:num)', 'except'=>'show']);
+// Rutas protegidas con el filtro de autenticación
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->resource('users', ['placeholder' => '(:num)', 'except' => 'show']); // CRUD de usuarios
+    $routes->resource('gafas', ['placeholder' => '(:num)', 'except' => 'show']); // CRUD de gafas
+    $routes->resource('criminals', ['placeholder' => '(:num)', 'except' => 'show']); // CRUD de criminales
+});
 
-    $routes->get('start', 'Dashboard::index');
-
-    $routes->resource('gafas', ['placeholder'=>'(:num)', 'except'=>'show']);
-
-
-    $routes->get('notifications', 'Notifications::index');
-
-    $routes->get('reporte-usuarios-pdf', 'Users::generarReportePDF');
-    
-    $routes->resource('criminals', ['placeholder'=>'(:num)', 'except'=>'show']);
-
-    $routes->get('head', 'Dashboard::header'); 
-     
- });
- // Ruta para ver el detalle de una notificación y marcarla como leída
-$routes->get('dashboard/detalleNotificacion/(:num)', 'Dashboard::detalleNotificacion/$1');
- $routes->get('reports/detalleCriminal/(:num)', 'Reports::detalleCriminal/$1');
-
- $routes->get('reportes', 'Reports::index');
-
- //$routes->post('camara/upload', 'CamaraController::upload');
-
- $routes->get('detections', 'Detections::index');
-
- $routes->post('api/notify-criminal', 'Notifications::recibir');
-
- $routes->post('detectar/almacenarDeteccion/(:any)', 'Detections::almacenarDeteccion/$1');
-
-
- $routes->post('gafas/registrar', 'Gafas::registrar');
-
-
- $routes->get('get_csrf_token', 'Security::get_csrf_token');

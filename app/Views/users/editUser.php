@@ -82,10 +82,10 @@
               <input type="email" value="<?= $usuario['email']; ?>" id="email" class="form-control" name="email" required />
             </div>
 
-            <div class="mb-3">
+            <!--<div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
               <input type="password" id="password" class="form-control" name="password" required />
-            </div>
+            </div>-->
 
             <div class="mb-3">
               <label for="tipo" class="form-label">Tipo de Usuario</label>

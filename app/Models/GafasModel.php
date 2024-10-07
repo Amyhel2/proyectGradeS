@@ -13,8 +13,8 @@ class GafasModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields = [
-        'oficial_id', 'device_id'
-    ];
+        'oficial_id', 'device_id','estado'
+        ];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

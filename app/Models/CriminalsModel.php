@@ -13,7 +13,7 @@ class CriminalsModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields = [
-        'nombre','alias', 'ci', 'foto', 'delitos', 'razon_busqueda', 'activo'
+        'nombre','alias', 'ci', 'delitos', 'razon_busqueda', 'activo'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -53,6 +53,29 @@ class CriminalsModel extends Model
         return $this->select('delitos as tipo, COUNT(idCriminal) as total')
                     ->groupBy('tipo')
                     ->findAll();
+    }
+
+
+    // Método para obtener un criminal por su ID
+    public function obtenerCriminalPorId($idCriminal)
+    {
+        return $this->where('idCriminal', $idCriminal)->first();
+    }
+
+    // Método para obtener las fotos asociadas a un criminal
+    public function obtenerFotosPorCriminal($idCriminal)
+    {
+        $builder = $this->db->table('fotos');
+        return $builder->where('criminal_id', $idCriminal)->get()->getResultArray();
+    }
+
+    public function obtenerCriminalConFotos($idCriminal)
+    {
+        $builder = $this->db->table('criminals');
+        $builder->select('criminals.*, fotos.ruta_foto, fotos.fecha_creacion');
+        $builder->join('fotos', 'fotos.criminal_id = criminals.idCriminal', 'left');
+        $builder->where('criminals.idCriminal', $idCriminal);
+        return $builder->get()->getResultArray();
     }
 
     

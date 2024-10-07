@@ -7,8 +7,8 @@
     <h3 id="titulo">DETECCIONES</h3>
 
     <div class="table-responsive shadow-lg p-3 bg-body rounded">
-        <table id="example2" class="table table-striped table-hover table-sm" aria-describedby="titulo">
-            <thead class="bg-info table-dark text-center">
+        <table id="example1" class="table table-striped table-hover table-sm" aria-describedby="titulo">
+            <thead class="bg-primary table-dark text-center">
                 <tr>
                     <th>ID Detección</th>
                     <th>Criminal</th>

@@ -4,18 +4,24 @@
 <?= $this->section('content'); ?>
 
 <div class="container mt-5">
-    <h2>Reporte Detallado del Criminal Detectado</h2>
+    <h2>Generar reportes</h2>
     <hr>
     <div class="row">
         
-        <div class="col-md-8">
-            <h3><?= esc($criminal['nombre']); ?> (Alias: <?= esc($criminal['alias']); ?>)</h3>
-            <p><strong>CI:</strong> <?= esc($criminal['ci']); ?></p>
-            <p><strong>Delitos:</strong> <?= esc($criminal['delitos']); ?></p>
-            <p><strong>Razón de Búsqueda:</strong> <?= esc($criminal['razon_busqueda']); ?></p>
-            <p><strong>Fecha de Detección:</strong> <?= esc($deteccion['fecha_deteccion']); ?></p>
-            <p><strong>Ubicación:</strong> <?= esc($deteccion['ubicacion']); ?></p>
-            <p><strong>Oficial:</strong> <?= esc($oficial['nombre']); ?></p>
+        <div class="col-md-4">
+        <a href="#" class="btn btn-success">
+            Reporte de Rankin de criminales mas buscados.
+        </a>
+        </div>
+        <div class="col-md-4">
+        <a href="#" class="btn btn-warning">
+            Reporte de los meses donde se detectaron mas criminales.
+        </a>
+        </div>
+        <div class="col-md-4">
+        <a href="#" class="btn btn-primary">
+            Reporte de los lugares por donde mas frecuentan los criminales
+        </a>
         </div>
     </div>
 </div>

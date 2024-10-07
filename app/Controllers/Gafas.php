@@ -10,7 +10,11 @@ class Gafas extends BaseController
     public function index()
     {
         $gafasModel = new GafasModel();
-        $data['gafas'] = $gafasModel->findAll(); // Obtener todas las gafas
+        $data['gafas'] = $gafasModel->where('estado', 1)->findAll();
+
+        // Obtener solo las gafas desactivadas 
+        $data['gafasDeshabilitadas'] = $gafasModel->where('estado', 0)->findAll();
+
         return view('gafas/index', $data);
     }
 
@@ -54,6 +58,8 @@ class Gafas extends BaseController
         return view('gafas/editGafas', $data);
     }
 
+    
+
     public function update($idGafas = null)
     {
         if (!$this->request->is('PUT') || $idGafas == null) {
@@ -88,10 +94,53 @@ class Gafas extends BaseController
         }
 
         $gafasModel = new GafasModel();
+        
+        // Comprobar si la gafa existe antes de intentar eliminarla
+        $gafa = $gafasModel->find($idGafas);
+        if (!$gafa) {
+            return redirect()->route('gafas')->with('error', 'El dispositivo no existe.');
+        }
+
         $gafasModel->delete($idGafas);
 
-        return redirect()->route('gafas');
+        return redirect()->route('gafas')->with('success', 'Dispositivo eliminado correctamente.');
     }
+
+
+
+    public function softDelete($idGafas)
+    {
+        $gafaModel = new GafasModel();
+        $data = ['estado' => 0]; // Suponiendo que 'activo' es el campo que indica si el usuario está activo o no.
+        $gafaModel->update($idGafas, $data);
+    
+        return redirect()->route('gafas')->with('success', 'Dispositivo desactivado correctamente.');
+    }
+
+
+    public function habilitar($idGafas = null)
+    {
+        if ($idGafas == null) {
+            return redirect()->route('gafas');
+        }
+
+        $gafasModel = new GafasModel();
+
+        // Verificar si la gafa existe
+        $gafa = $gafasModel->find($idGafas);
+        if (!$gafa) {
+            return redirect()->route('gafas')->with('error', 'El dispositivo no existe.');
+        }
+
+        // Habilitar la gafa (cambiar active a 1)
+        $gafasModel->update($idGafas, ['estado' => 1]);
+
+        return redirect()->route('gafas')->with('success', 'Dispositivo habilitado correctamente.');
+    }
+
+
+
+
 }
 
 
