@@ -29,7 +29,7 @@ class Detections extends BaseController
 public function almacenarDeteccion($criminalId, $deviceId)
 {
     $modelo = new DetectionModel();
-    $gafaModel = new GafasModel(); // Asegúrate de que el modelo de gafas esté disponible
+    $gafaModel = new GafasModel(); // Modelo de gafas
 
     // Obtener el oficial_id usando el device_id
     $gafa = $gafaModel->where('device_id', $deviceId)->first();
@@ -40,21 +40,25 @@ public function almacenarDeteccion($criminalId, $deviceId)
         return $this->response->setJSON(['status' => 'error', 'message' => 'ID de criminal u oficial inválido.']);
     }
 
-    // Obtener el porcentaje de confianza desde la solicitud
+    // Obtener los datos de la solicitud: confianza, latitud, longitud y la imagen detectada
     $confianza = $this->request->getPost('confianza') ?? null;
+    $latitud = $this->request->getPost('latitud') ?? null;
+    $longitud = $this->request->getPost('longitud') ?? null;
+    $imagen_detectada = $this->request->getPost('imagen_detectada') ?? null;  // Imagen detectada
 
-    // Validar el valor de confianza
-    if (empty($confianza)) {
-        return $this->response->setJSON(['status' => 'error', 'message' => 'Confianza no proporcionada.']);
+    // Validar el valor de confianza, latitud, longitud y la imagen
+    if (empty($confianza) || empty($latitud) || empty($longitud) || empty($imagen_detectada)) {
+        return $this->response->setJSON(['status' => 'error', 'message' => 'Datos insuficientes.']);
     }
 
     // Datos de la detección
     $data = [
         'criminal_id' => $criminalId,
-        'oficial_id' => $oficialId, // Asignar el oficial_id obtenido
-        'fecha' => date('Y-m-d H:i:s'), // Fecha y hora actual
-        'ubicacion' => 'Ubicación desconocida', // O puedes pasar una ubicación real si la tienes
-        'confianza' => $confianza, // Guardar el porcentaje de confianza
+        'oficial_id' => $oficialId,
+        'fecha_deteccion' => date('Y-m-d H:i:s'),
+        'ubicacion' => json_encode(['latitud' => $latitud, 'longitud' => $longitud]),
+        'confianza' => $confianza,
+        'imagen_detectada' => $imagen_detectada // Guardar la imagen detectada
     ];
 
     // Intentar insertar la detección en la base de datos
@@ -65,10 +69,6 @@ public function almacenarDeteccion($criminalId, $deviceId)
     }
 }
 
-
-
-
-    
 
     
 }

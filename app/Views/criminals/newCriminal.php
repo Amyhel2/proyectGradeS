@@ -51,10 +51,19 @@
 
           <!-- Columna derecha -->
           <div class="col-md-6">
-            <div class="mb-3">
-              <label for="delitos" class="form-label">Delitos</label>
-              <textarea id="delitos" class="form-control" name="delitos" rows="3" required><?= old('delitos'); ?></textarea>
-            </div>
+
+          
+          <div class="mb-3">
+    <label for="delitos" class="form-label">Delitos</label>
+    <select id="delitos" class="form-control" name="delitos[]" multiple size="3" required>
+    <?php foreach ($delitos as $delito): ?>
+        <option value="<?= esc($delito['idDelito']); ?>"><?= esc($delito['tipo']); ?></option>
+    <?php endforeach; ?>
+</select>
+
+    <small class="text-muted">Puedes seleccionar múltiples delitos usando Ctrl (Cmd en Mac).</small>
+</div>
+
 
             <div class="mb-3">
               <label for="razon_busqueda" class="form-label">Razón de Búsqueda</label>

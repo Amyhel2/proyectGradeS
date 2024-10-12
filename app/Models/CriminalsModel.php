@@ -56,6 +56,17 @@ class CriminalsModel extends Model
     }
 
 
+    public function getCriminalesBuscados()
+    {
+        return $this->db->table('criminals c')
+            ->select('c.id, c.nombre, c.foto, d.tipo_delito, COUNT(d.id) AS total_delitos')
+            ->join('delitos d', 'c.id = d.criminal_id', 'left')
+            ->groupBy('c.id, d.tipo_delito')
+            ->orderBy('total_delitos', 'DESC')
+            ->get()
+            ->getResultArray();
+    }
+
     // Método para obtener un criminal por su ID
     public function obtenerCriminalPorId($idCriminal)
     {

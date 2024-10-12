@@ -16,6 +16,7 @@
         <a href="<?= base_url('password-change'); ?>" class="d-block"><?php echo esc(session('username')); ?></a>
       </div>
     </div>
+    
 
     <!-- Sidebar Menu -->
     <nav class="mt-2 enlace-a">
@@ -54,7 +55,7 @@
 </li>
 
         <!-- Añadir las opciones en el menú lateral -->
-<li class="nav-item">
+<li class="nav-item">  
     <a href="<?= base_url('detections'); ?>" class="nav-link">
         <i class="nav-icon fas fa-eye"></i>
         <p>Detecciones</p>

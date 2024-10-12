@@ -5,29 +5,25 @@ namespace App\Controllers;
 use CodeIgniter\Files\File;
 use App\Controllers\BaseController;
 use App\Models\CriminalsModel;
-use App\Models\FotosModel;  
-use App\Models\DelitosModel;
+use App\Models\FotosModel;
 
-class Criminals extends BaseController
+class Delitos extends BaseController
 {
     public function index()
     {
+
         $criminalModel = new CriminalsModel();
 
-        // Obtener criminales activos e inactivos
         $data['criminales'] = $criminalModel->where('activo', 1)->findAll();
-        $data['criminalesDeshabilitados'] = $criminalModel->where('activo', 0)->findAll();
-
+        // Obtener solo los usuarios desactivados
+    $data['criminalesDeshabilitados'] = $criminalModel->where('activo', 0)->findAll();
+        
         return view('criminals/index', $data);
     }
 
     public function new()
     {
-        $delitosModel = new DelitosModel();
-        // Obtener los delitos para mostrarlos en el formulario
-        $data['delitos'] = $delitosModel->select('idDelito, tipo')->where('estado', 1)->findAll();
-
-        return view('criminals/newCriminal', $data);
+        return view('criminals/newCriminal');
     }
 
     public function create()
@@ -36,7 +32,7 @@ class Criminals extends BaseController
         'nombre' => 'required|max_length[30]',
         'alias' => 'required|max_length[30]',
         'ci' => 'required|max_length[20]|is_unique[criminals.ci]',
-        'delitos' => 'required',  // Validamos que se seleccione al menos un delito
+        'delitos' => 'required|max_length[255]',
         'razon_busqueda' => 'required|max_length[255]',
         'fotos' => 'uploaded[fotos]|max_size[fotos,2048]|ext_in[fotos,jpg,jpeg,png,webp]',
     ];
@@ -57,40 +53,40 @@ class Criminals extends BaseController
             'nombre' => $this->request->getPost('nombre'),
             'alias' => $this->request->getPost('alias'),
             'ci' => $this->request->getPost('ci'),
+            'delitos' => $this->request->getPost('delitos'),
             'razon_busqueda' => $this->request->getPost('razon_busqueda'),
-            'delitos' => implode(',', $this->request->getPost('delitos')),  // Guardamos los delitos seleccionados como lista separada por comas
             'activo' => 1,
         ];
 
         $criminalModel->insert($criminalData);
         $idCriminal = $criminalModel->getInsertID();
 
-        // Procesar las fotos
         $files = $this->request->getFiles();
+
         foreach ($files['fotos'] as $file) {
             if ($file->isValid() && !$file->hasMoved()) {
+                // Obtiene la extensión del archivo
+                $extension = $file->getClientExtension();
+
+                // Genera el nuevo nombre del archivo con la extensión
                 $nombreCriminal = preg_replace('/[^a-zA-Z0-9_-]/', '_', $this->request->getPost('nombre'));
+                $newName = $idCriminal . '_' . $nombreCriminal . '.' . $extension;
 
-                // Inserta primero los datos de la foto para obtener el idFoto
-                $fotoData = [
-                    'criminal_id' => $idCriminal,
-                    'ruta_foto' => '',  // De momento, lo dejamos vacío
-                    'fecha_creacion' => date('Y-m-d H:i:s'),
-                ];
-
-                $fotosModel->insert($fotoData);
-                $idFoto = $fotosModel->getInsertID();
-
-                // Generar el nombre de la imagen con el idFoto
-                $newName = $idFoto . '_' . $nombreCriminal . '_' . $idCriminal . '.' . $file->getClientExtension();
+                // Mueve el archivo con el nuevo nombre
                 $file->move('uploads/criminales', $newName);
+                $imageUrl = base_url('uploads/criminales/' . $newName);
 
-                // Actualizar la ruta de la foto en la base de datos con el nombre correcto
-                $fotosModel->update($idFoto, ['ruta_foto' => $newName]);
+                // Inserta la ruta de la foto en la base de datos
+                $fotosModel->insert([
+                    'criminal_id' => $idCriminal,
+                    'ruta_foto' => $newName,
+                    'fecha_creacion' => date('Y-m-d H:i:s'),
+                ]);
             }
         }
 
         $db->transCommit();
+
         return redirect()->route('criminals');
     } catch (\Exception $e) {
         $db->transRollback();
@@ -99,58 +95,66 @@ class Criminals extends BaseController
 }
 
 
+    public function edit($idCriminal = null)
+    {
+        if ($idCriminal == null) {
+            return redirect()->route('criminals');
+        }
 
-public function edit($idCriminal = null)
-{
-    if ($idCriminal == null) {
-        return redirect()->route('criminals');
+        $criminalModel = new CriminalsModel();
+        $data['criminal'] = $criminalModel->find($idCriminal);
+
+        return view('criminals/editCriminal', $data);
     }
-
-    $criminalModel = new CriminalsModel();
-    $delitosModel = new DelitosModel();
-
-    // Obtener el criminal y los delitos seleccionados
-    $data['criminal'] = $criminalModel->find($idCriminal);
-    $data['delitos'] = $delitosModel->select('idDelito, tipo')->where('estado', 1)->findAll();
-    $data['delitosSeleccionados'] = explode(',', $data['criminal']['delitos']);  // Convertimos la lista de delitos a un array
-
-    return view('criminals/editCriminal', $data);
-}
-
 
     public function update($idCriminal = null)
-{
-    if (!$this->request->is('PUT') || $idCriminal == null) {
+    {
+        if (!$this->request->is('PUT') || $idCriminal == null) {
+            return redirect()->route('criminals');
+        }
+
+        $rules = [
+            'nombre' => 'required|max_length[30]',
+            'alias' => 'required|max_length[30]',
+            'ci' => "required|max_length[20]|is_unique[criminals.ci,idCriminal,{$idCriminal}]",
+            'delitos' => 'required|max_length[255]',
+            'razon_busqueda' => 'required|max_length[255]',
+            'foto' => 'max_size[foto,1024]|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png,image/webp]',
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
+        }
+
+        $criminalModel = new CriminalsModel();
+        $criminal = $criminalModel->find($idCriminal);
+
+        $data = [
+            'nombre' => $this->request->getPost('nombre'),
+            'alias' => $this->request->getPost('alias'),
+            'ci' => $this->request->getPost('ci'),
+            'delitos' => $this->request->getPost('delitos'),
+            'razon_busqueda' => $this->request->getPost('razon_busqueda'),
+            'activo' => $this->request->getPost('activo'),
+        ];
+
+        if ($this->request->getFile('foto')->isValid()) {
+            $file = $this->request->getFile('foto');
+            $nombreCriminal = preg_replace('/[^a-zA-Z0-9_-]/', '_', $this->request->getPost('nombre'));
+            $newName = $idCriminal . '_' . $nombreCriminal . '_' . $file->getRandomName();
+            $file->move('uploads/criminales', $newName);
+            $imageUrl = base_url('uploads/criminales/' . $newName);
+            $data['foto'] = $imageUrl;
+
+            if (!empty($criminal['foto']) && file_exists(FCPATH . 'uploads/criminales/' . basename($criminal['foto']))) {
+                unlink(FCPATH . 'uploads/criminales/' . basename($criminal['foto']));
+            }
+        }
+
+        $criminalModel->update($idCriminal, $data);
+
         return redirect()->route('criminals');
     }
-
-    $rules = [
-        'nombre' => 'required|max_length[30]',
-        'alias' => 'required|max_length[30]',
-        'ci' => "required|max_length[20]|is_unique[criminals.ci,idCriminal,{$idCriminal}]",
-        'delitos' => 'required',  // Validamos que se seleccione al menos un delito
-        'razon_busqueda' => 'required|max_length[255]',
-        'foto' => 'max_size[foto,2048]|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png,image/webp]',
-    ];
-
-    if (!$this->validate($rules)) {
-        return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
-    }
-
-    $criminalModel = new CriminalsModel();
-    $data = [
-        'nombre' => $this->request->getPost('nombre'),
-        'alias' => $this->request->getPost('alias'),
-        'ci' => $this->request->getPost('ci'),
-        'delitos' => implode(',', $this->request->getPost('delitos')),  // Guardamos los delitos seleccionados
-        'razon_busqueda' => $this->request->getPost('razon_busqueda'),
-        'activo' => $this->request->getPost('activo'),
-    ];
-
-    $criminalModel->update($idCriminal, $data);
-    return redirect()->route('criminals');
-}
-
 
     public function delete($idCriminal = null)
     {

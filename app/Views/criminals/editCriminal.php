@@ -40,6 +40,7 @@
                             <input type="text" value="<?= esc($criminal['ci']); ?>" id="ci" class="form-control" name="ci" required />
                         </div>
 
+                        <!-- Mostrar la foto actual si está disponible -->
                         <?php if (!empty($criminal['foto'])) : ?>
                             <div class="mb-3 text-center">
                                 <label class="form-label">Foto Actual:</label>
@@ -49,6 +50,7 @@
                             </div>
                         <?php endif; ?>
 
+                        <!-- Campo para cambiar la foto -->
                         <div class="mb-3">
                             <label for="foto" class="form-label">Nueva Foto (opcional)</label>
                             <input type="file" id="foto" class="form-control" name="foto" />
@@ -56,9 +58,16 @@
                     </div>
 
                     <div class="col-md-6">
+                        <!-- Checkbox para seleccionar múltiples delitos -->
                         <div class="mb-3">
                             <label for="delitos" class="form-label">Delitos</label>
-                            <input type="text" value="<?= esc($criminal['delitos']); ?>" id="delitos" class="form-control" name="delitos" required />
+                            <?php foreach ($delitos as $delito): ?>
+                                <div>
+                                    <input type="checkbox" name="delitos[]" value="<?= esc($delito['idDelito']); ?>"
+                                        <?= in_array($delito['idDelito'], $delitosSeleccionados) ? 'checked' : ''; ?> />
+                                    <label><?= esc($delito['tipo']); ?></label>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
 
                         <div class="mb-3">
@@ -66,6 +75,7 @@
                             <input type="text" value="<?= esc($criminal['razon_busqueda']); ?>" id="razon_busqueda" class="form-control" name="razon_busqueda" required />
                         </div>
 
+                        <!-- Selección de estado activo o inactivo -->
                         <div class="mb-3">
                             <label for="activo" class="form-label">Activo</label>
                             <select id="activo" class="form-select" name="activo" required>
@@ -82,6 +92,7 @@
                 </div>
             </form>
 
+            <!-- Mostrar los errores si existen -->
             <?php if (session()->getFlashdata('errors') !== null): ?>
                 <div class="alert alert-danger my-3" role="alert">
                     <?= session()->getFlashdata('errors'); ?>
@@ -93,4 +104,3 @@
 </div>
 
 <?= $this->endSection(); ?>
-

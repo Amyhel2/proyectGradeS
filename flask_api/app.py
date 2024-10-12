@@ -1,36 +1,57 @@
 from flask import Flask, request, jsonify
 import face_recognition
 import os
-import numpy as np
+import time  # Asegúrate de importar 'time' para generar un timestamp
 import requests
 
 app = Flask(__name__)
 
 # Ruta donde están las imágenes de los criminales
-RUTA_CRIMINALES = 'C:/xampp/htdocs/proyectGradeS/public/uploads/criminales/'  # Asegúrate de que esta ruta es correcta
-URL_API_DETECCIONES = 'http://localhost/proyectGradeS/public/detectar/almacenarDeteccion/'  # Cambia esto a la URL de tu API en CodeIgniter
+RUTA_CRIMINALES = 'C:/xampp/htdocs/proyectGradeS/public/uploads/criminales/'
+# Ruta donde se guardarán las imágenes detectadas
+RUTA_DETECCIONES = 'C:/xampp/htdocs/proyectGradeS/public/uploads/ImagenesCriminalesDetectados/'
+URL_API_DETECCIONES = 'http://localhost/proyectGradeS/public/detectar/almacenarDeteccion/'
+
+# Asegúrate de que la carpeta de detecciones existe
+if not os.path.exists(RUTA_DETECCIONES):
+    os.makedirs(RUTA_DETECCIONES)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if not request.data:
         return jsonify({"error": "No file part"}), 400
 
-    # Obtener el ID del dispositivo de la cabecera correcta
-    device_id = request.headers.get('Device-ID') 
+    # Obtener el ID del dispositivo y las coordenadas GPS desde los headers
+    device_id = request.headers.get('Device-ID')
+    latitud = request.headers.get('Latitud')
+    longitud = request.headers.get('Longitud')
+
     print(f"ID del dispositivo: {device_id}")
+    print(f"Latitud: {latitud}, Longitud: {longitud}")
 
     try:
-        # Guarda el archivo recibido
-        with open('received_image.jpg', 'wb') as f:
-            f.write(request.data)
-        print("Archivo recibido y guardado.")
+        # Guardar la imagen recibida en la carpeta de detecciones
+        nombre_imagen = f"detected_image_{device_id}_{int(time.time())}.jpg"
+        ruta_imagen = os.path.join(RUTA_DETECCIONES, nombre_imagen)
 
-        # Aquí se llama a la función que compara la imagen recibida con la base de datos
-        resultado, confianza = comparar_imagen_con_base('received_image.jpg')
+        with open(ruta_imagen, 'wb') as f:
+            f.write(request.data)
+        print(f"Imagen detectada y guardada en: {ruta_imagen}")
+
+        # Compara la imagen recibida con la base de datos de criminales
+        resultado, confianza = comparar_imagen_con_base(ruta_imagen)
 
         if resultado:
-            criminal_id = resultado.split("_")[0]  # Extrae el ID del criminal
-            response = requests.post(f"{URL_API_DETECCIONES}{criminal_id}/{device_id}", data={"confianza": confianza})
+            criminal_id = resultado.split("_")[-1].split(".")[0]  # Extraer el ID del criminal
+            response = requests.post(
+                f"{URL_API_DETECCIONES}{criminal_id}/{device_id}",
+                data={
+                    "confianza": confianza,
+                    "latitud": latitud,       # Añadir la latitud
+                    "longitud": longitud,     # Añadir la longitud
+                    "imagen_detectada": nombre_imagen  # Enviar el nombre de la imagen detectada
+                }
+            )
 
             if response.status_code == 200:
                 print("Detección almacenada correctamente.")
@@ -41,14 +62,19 @@ def upload_file():
                 "message": "File received and criminal detected",
                 "criminal_detected": True,
                 "nombre_criminal": resultado,
-                "confianza": confianza,  # Incluir la confianza en la respuesta
-                "device_id": device_id  # Incluye el ID del dispositivo en la respuesta
+                "confianza": confianza,
+                "device_id": device_id,
+                "latitud": latitud,
+                "longitud": longitud,
+                "imagen_detectada": nombre_imagen  # Incluir la imagen detectada en la respuesta
             }), 200
         else:
             return jsonify({
                 "message": "File received but no criminal detected",
                 "criminal_detected": False,
-                "device_id": device_id  # Incluye el ID del dispositivo en la respuesta
+                "device_id": device_id,
+                "latitud": latitud,
+                "longitud": longitud
             }), 200
 
     except Exception as e:
@@ -116,6 +142,7 @@ def comparar_imagen_con_base(imagen_recibida):
     except Exception as e:
         print("Error en la comparación de imágenes:", str(e))
         return None, None
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)

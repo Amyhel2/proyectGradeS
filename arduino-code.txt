@@ -1,0 +1,155 @@
+#include "esp_camera.h"  // Librería para usar la cámara del ESP32
+#include <WiFi.h>        // Librería para manejar la conexión WiFi
+#include <HTTPClient.h>  // Librería para enviar peticiones HTTP
+
+// =============================
+// Seleccionar modelo de cámara
+// =============================
+#define CAMERA_MODEL_AI_THINKER  // Define el modelo de cámara AI Thinker que tiene PSRAM
+#include "camera_pins.h"         // Archivo de configuración de pines según el modelo de cámara
+
+// =============================
+// Credenciales de WiFi
+// =============================
+const char *ssid = "FAMILIA_HURTADO";      // Nombre de la red WiFi
+const char *password = "7355672cbb@";      // Contraseña de la red WiFi
+
+// =============================
+// URL del servidor donde se enviarán las imágenes
+// =============================
+const char* serverUrl = "http://192.168.100.16:5000/upload";  // Dirección del servidor para recibir imágenes
+
+// =============================
+// Definir ID del dispositivo
+// =============================
+const char* deviceID = "ESP32_DEVICE_001";  // ID único del dispositivo
+
+// Declaración de funciones
+void startCameraServer();
+void setupLedFlash(int pin);
+
+// Configuración inicial del ESP32
+void setup() {
+    Serial.begin(115200);              // Inicia la comunicación serial a 115200 baudios
+    Serial.setDebugOutput(true);       // Activa la salida de depuración
+    Serial.println();
+
+    // Configuración de la cámara
+    camera_config_t config;
+    config.ledc_channel = LEDC_CHANNEL_0;
+    config.ledc_timer = LEDC_TIMER_0;
+    config.pin_d0 = Y2_GPIO_NUM;
+    config.pin_d1 = Y3_GPIO_NUM;
+    config.pin_d2 = Y4_GPIO_NUM;
+    config.pin_d3 = Y5_GPIO_NUM;
+    config.pin_d4 = Y6_GPIO_NUM;
+    config.pin_d5 = Y7_GPIO_NUM;
+    config.pin_d6 = Y8_GPIO_NUM;
+    config.pin_d7 = Y9_GPIO_NUM;
+    config.pin_xclk = XCLK_GPIO_NUM;
+    config.pin_pclk = PCLK_GPIO_NUM;
+    config.pin_vsync = VSYNC_GPIO_NUM;
+    config.pin_href = HREF_GPIO_NUM;
+    config.pin_sccb_sda = SIOD_GPIO_NUM;
+    config.pin_sccb_scl = SIOC_GPIO_NUM;
+    config.pin_pwdn = PWDN_GPIO_NUM;
+    config.pin_reset = RESET_GPIO_NUM;
+    config.xclk_freq_hz = 20000000;          // Frecuencia del reloj de la cámara
+    config.frame_size = FRAMESIZE_UXGA;      // Tamaño del frame (resolución)
+    config.pixel_format = PIXFORMAT_JPEG;    // Formato de imagen
+    config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
+    config.fb_location = CAMERA_FB_IN_PSRAM;
+    config.jpeg_quality = 12;                // Calidad JPEG, más bajo significa mejor calidad
+    config.fb_count = 1;                     // Número de buffers de frames
+
+    // Ajustes según disponibilidad de PSRAM
+    if (config.pixel_format == PIXFORMAT_JPEG) {
+        if (psramFound()) {
+            config.jpeg_quality = 10;        // Mejora la calidad si se encuentra PSRAM
+            config.fb_count = 2;             // Usa dos buffers
+            config.grab_mode = CAMERA_GRAB_LATEST;
+        } else {
+            config.frame_size = FRAMESIZE_SVGA;
+            config.fb_location = CAMERA_FB_IN_DRAM;
+        }
+    } else {
+        config.frame_size = FRAMESIZE_240X240;
+        #if CONFIG_IDF_TARGET_ESP32S3
+            config.fb_count = 2;
+        #endif
+    }
+
+    // Inicialización de la cámara
+    esp_err_t err = esp_camera_init(&config);
+    if (err != ESP_OK) {
+        Serial.printf("Falló la inicialización de la cámara con error 0x%x", err);
+        return;
+    }
+
+    // Ajustes del sensor
+    sensor_t *s = esp_camera_sensor_get();
+    if (s->id.PID == OV3660_PID) {
+        s->set_vflip(s, 1);        // Voltea la imagen verticalmente
+        s->set_brightness(s, 1);   // Ajusta el brillo
+        s->set_saturation(s, -2);  // Ajusta la saturación
+    }
+
+    // Ajustes según el modelo de cámara
+    #if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
+        s->set_vflip(s, 1);  // Voltea la imagen
+        s->set_hmirror(s, 1);  // Habilita el espejo horizontal
+    #endif
+
+    #if defined(CAMERA_MODEL_ESP32S3_EYE)
+        s->set_vflip(s, 1);  // Voltea la imagen
+    #endif
+
+    // Configuración del flash LED (si está definido)
+    #if defined(LED_GPIO_NUM)
+        setupLedFlash(LED_GPIO_NUM);
+    #endif
+
+    // Conexión WiFi
+    WiFi.begin(ssid, password);
+    WiFi.setSleep(false);  // Desactiva el modo de sueño de WiFi para mantener conexión constante
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("");
+    Serial.println("WiFi conectado");
+
+    // Inicia el servidor de la cámara
+    startCameraServer();
+    Serial.print("¡Cámara lista! Usa 'http://");
+    Serial.print(WiFi.localIP());  // Imprime la IP local para acceder a la cámara
+    Serial.println("' para conectarte");
+}
+
+void loop() {
+    // Captura de imagen de la cámara
+    camera_fb_t *fb = esp_camera_fb_get();
+    if (!fb) {
+        Serial.println("Error en la captura de la cámara");
+        return;
+    }
+
+    // Envío de la imagen capturada al servidor mediante HTTP POST
+    HTTPClient http;
+    http.begin(serverUrl);
+    http.addHeader("Content-Type", "image/jpeg");  // Indica que el contenido es una imagen JPEG
+    http.addHeader("Device-ID", deviceID);         // Envía el ID del dispositivo en el encabezado
+
+    int httpResponseCode = http.POST(fb->buf, fb->len);  // Envía la imagen capturada
+    if (httpResponseCode > 0) {
+        String response = http.getString();
+        Serial.println("Respuesta del servidor: " + response);  // Imprime la respuesta del servidor
+    } else {
+        Serial.printf("Error al enviar la imagen, error: %s\n", http.errorToString(httpResponseCode).c_str());
+    }
+
+    http.end();  // Finaliza la conexión HTTP
+    esp_camera_fb_return(fb);  // Libera el buffer de la imagen
+
+    delay(30000);  // Espera 30 segundos antes de capturar y enviar otra imagen
+}
