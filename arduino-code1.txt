@@ -1,0 +1,178 @@
+#include "esp_camera.h"
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <TinyGPSPlus.h>
+
+// ===================
+// Select camera model
+// ===================
+#define CAMERA_MODEL_AI_THINKER // Has PSRAM
+#include "camera_pins.h"
+
+// ===========================
+// Enter your WiFi credentials
+// ===========================
+const char *ssid = "FAMILIA_HURTADO";
+const char *password = "7355672cbb@";
+
+// ===========================
+// Server URL
+// ===========================
+const char* serverUrl = "http://192.168.100.16:5000/upload";
+
+// ===========================
+// Define Device ID
+// ===========================
+const char* deviceID = "ESP32_DEVICE_001";  // ID del dispositivo
+
+// ===========================
+// GPS
+// ===========================
+TinyGPSPlus gps;  // Crear el objeto GPS
+HardwareSerial gpsSerial(1);  // Serial para GPS
+
+void startCameraServer();
+void setupLedFlash(int pin);
+
+void setup() {
+  Serial.begin(115200);
+  Serial.setDebugOutput(true);
+  Serial.println();
+
+  // Inicializar puerto serial para el GPS
+  gpsSerial.begin(9600, SERIAL_8N1, 14, 15); // RX=14, TX=15, ajusta según tus pines de conexión GPS
+
+  // Configuración de la cámara
+  camera_config_t config;
+  config.ledc_channel = LEDC_CHANNEL_0;
+  config.ledc_timer = LEDC_TIMER_0;
+  config.pin_d0 = Y2_GPIO_NUM;
+  config.pin_d1 = Y3_GPIO_NUM;
+  config.pin_d2 = Y4_GPIO_NUM;
+  config.pin_d3 = Y5_GPIO_NUM;
+  config.pin_d4 = Y6_GPIO_NUM;
+  config.pin_d5 = Y7_GPIO_NUM;
+  config.pin_d6 = Y8_GPIO_NUM;
+  config.pin_d7 = Y9_GPIO_NUM;
+  config.pin_xclk = XCLK_GPIO_NUM;
+  config.pin_pclk = PCLK_GPIO_NUM;
+  config.pin_vsync = VSYNC_GPIO_NUM;
+  config.pin_href = HREF_GPIO_NUM;
+  config.pin_sccb_sda = SIOD_GPIO_NUM;
+  config.pin_sccb_scl = SIOC_GPIO_NUM;
+  config.pin_pwdn = PWDN_GPIO_NUM;
+  config.pin_reset = RESET_GPIO_NUM;
+  config.xclk_freq_hz = 20000000;
+  config.frame_size = FRAMESIZE_UXGA;
+  config.pixel_format = PIXFORMAT_JPEG;
+  config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
+  config.fb_location = CAMERA_FB_IN_PSRAM;
+  config.jpeg_quality = 12;
+  config.fb_count = 1;
+
+  if (config.pixel_format == PIXFORMAT_JPEG) {
+    if (psramFound()) {
+      config.jpeg_quality = 10;
+      config.fb_count = 2;
+      config.grab_mode = CAMERA_GRAB_LATEST;
+    } else {
+      config.frame_size = FRAMESIZE_SVGA;
+      config.fb_location = CAMERA_FB_IN_DRAM;
+    }
+  } else {
+    config.frame_size = FRAMESIZE_240X240;
+#if CONFIG_IDF_TARGET_ESP32S3
+    config.fb_count = 2;
+#endif
+  }
+
+  esp_err_t err = esp_camera_init(&config);
+  if (err != ESP_OK) {
+    Serial.printf("Camera init failed with error 0x%x", err);
+    return;
+  }
+
+  sensor_t *s = esp_camera_sensor_get();
+  if (s->id.PID == OV3660_PID) {
+    s->set_vflip(s, 1);
+    s->set_brightness(s, 1);
+    s->set_saturation(s, -2);
+  }
+
+  if (config.pixel_format == PIXFORMAT_JPEG) {
+    s->set_framesize(s, FRAMESIZE_QVGA);
+  }
+
+  WiFi.begin(ssid, password);
+  WiFi.setSleep(false);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected");
+
+  startCameraServer();
+
+  // Imprimir la dirección IP y URL para acceder a la cámara
+  Serial.print("Camera Ready! Use 'http://");
+  Serial.print(WiFi.localIP());
+  Serial.println("' to connect");
+
+  // Imprimir la dirección IP del dispositivo
+  Serial.print("Device IP Address: ");
+  Serial.println(WiFi.localIP());
+
+  // Imprimir la red WiFi a la que está conectado
+  Serial.print("Connected to WiFi network: ");
+  Serial.println(WiFi.SSID());
+}
+
+void loop() {
+  // Verificar datos del GPS
+  while (gpsSerial.available() > 0) {
+    gps.encode(gpsSerial.read());
+  }
+
+  if (gps.location.isValid()) {
+    float latitude = gps.location.lat();
+    float longitude = gps.location.lng();
+    Serial.print("Latitud: ");
+    Serial.println(latitude, 6);
+    Serial.print("Longitud: ");
+    Serial.println(longitude, 6);
+
+    // Capturar imagen y enviar junto con las coordenadas GPS
+    camera_fb_t *fb = esp_camera_fb_get();
+    if (!fb) {
+      Serial.println("Error en captura de cámara");
+      return;
+    }
+
+    HTTPClient http;
+    http.begin(serverUrl);
+    http.addHeader("Content-Type", "image/jpeg");
+    http.addHeader("Device-ID", deviceID);
+
+    // Enviar latitud y longitud como headers
+    http.addHeader("Latitud", String(latitude, 6));
+    http.addHeader("Longitud", String(longitude, 6));
+
+    int httpResponseCode = http.POST(fb->buf, fb->len);
+
+    if (httpResponseCode > 0) {
+      String response = http.getString();
+      Serial.println("Respuesta del servidor: " + response);
+    } else {
+      Serial.printf("Error al enviar la imagen: %s\n", http.errorToString(httpResponseCode).c_str());
+    }
+
+    http.end();
+    esp_camera_fb_return(fb);
+
+    delay(30000);  // Esperar 30 segundos antes de enviar otra imagen
+  } else {
+    Serial.println("Esperando señal de GPS...");
+  }
+}
