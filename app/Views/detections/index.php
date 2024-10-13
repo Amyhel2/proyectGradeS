@@ -22,23 +22,28 @@
     <?php foreach($detecciones as $deteccion): ?>
     <tr class="text-center">
         <td><?= esc($deteccion['idDeteccion']); ?></td>
-        <td><?= esc($deteccion['criminal_nombre']); ?></td> <!-- Muestra el nombre del criminal -->
+        <td><?= esc($deteccion['criminal_nombre']); ?></td>
         <td><?= esc($deteccion['oficial_id']); ?></td>
         <td><?= esc($deteccion['fecha_deteccion']); ?></td>
-        <td><?= esc($deteccion['ubicacion']); ?></td>
+        <td>
+            <?php
+                $ubicacion = esc($deteccion['ubicacion']);
+                $latLong = explode(',', $ubicacion);
+                $lat = trim($latLong[0]);
+                $long = trim($latLong[1]);
+                
+            ?>
+            <a href="<?= base_url("map/showMap/$lat/$long"); ?>" target="_self">Ver en el mapa</a> <!-- Enlace al mapa -->
+        </td>
         <td><?= esc($deteccion['confianza']); ?></td>
     </tr>
     <?php endforeach; ?>
 </tbody>
- 
         </table>
     </div>
 </div>
 
-<?= $this->endSection(); ?>
-
-<?= $this->section('script'); ?>
-
-
 
 <?= $this->endSection(); ?>
+
+

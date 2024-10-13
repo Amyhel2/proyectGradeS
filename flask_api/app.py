@@ -43,7 +43,7 @@ def upload_file():
             extension = 'jpg'  # Cambia esto según el formato de tus imágenes
 
             # Crear el nombre del archivo detectado en el formato idCriminal_nombrecriminal.extensión
-            nombre_imagen_detectada = f"{criminal_id}_{nombre_criminal}.{extension}"
+            nombre_imagen_detectada = f"{nombre_criminal}.{extension}"
             ruta_imagen_destino = os.path.join(RUTA_IMAGENES_DETECTADOS, nombre_imagen_detectada)
 
             # Mover la imagen recibida a la carpeta de imágenes detectadas

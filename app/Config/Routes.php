@@ -58,4 +58,7 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->resource('gafas', ['placeholder' => '(:num)', 'except' => 'show']); // CRUD de gafas
     $routes->resource('criminals', ['placeholder' => '(:num)', 'except' => 'show']); // CRUD de criminales
 });
+$routes->get('map/showMap/(:segment)/(:segment)', 'Maps::showMap/$1/$2');
+
+
 
