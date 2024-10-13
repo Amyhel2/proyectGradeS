@@ -37,13 +37,14 @@ class Detections extends BaseController
             return $this->response->setJSON(['status' => 'error', 'message' => 'ID de criminal u oficial inválido.']);
         }
 
-        // Obtener el porcentaje de confianza, latitud y longitud desde la solicitud
+        // Obtener el porcentaje de confianza, latitud, longitud y foto_deteccion desde la solicitud
         $confianza = $this->request->getPost('confianza') ?? null;
         $latitud = $this->request->getPost('latitud') ?? null;
         $longitud = $this->request->getPost('longitud') ?? null;
+        $foto_deteccion = $this->request->getPost('foto_deteccion') ?? null; // Obtener la nueva variable
 
         // Validar los valores recibidos
-        if (empty($confianza) || empty($latitud) || empty($longitud)) {
+        if (empty($confianza) || empty($latitud) || empty($longitud) || empty($foto_deteccion)) {
             return $this->response->setJSON(['status' => 'error', 'message' => 'Datos incompletos proporcionados.']);
         }
 
@@ -54,6 +55,7 @@ class Detections extends BaseController
             'fecha_deteccion' => date('Y-m-d H:i:s'), // Fecha y hora actual
             'ubicacion' => "Latitud: $latitud, Longitud: $longitud", // Guardar la ubicación
             'confianza' => $confianza, // Guardar el porcentaje de confianza
+            'foto_deteccion' => $foto_deteccion, // Guardar la ruta de la imagen detectada
         ];
 
         // Intentar insertar la detección en la base de datos
