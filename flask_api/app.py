@@ -34,29 +34,26 @@ def upload_file():
         resultado, confianza = comparar_imagen_con_base('received_image.jpg')
 
         if resultado:  # Si se encontró una coincidencia
-            # Extraer el ID y nombre del criminal del nombre del archivo
             partes_nombre = resultado.split("_")
             criminal_id = partes_nombre[-1]
             nombre_criminal = "_".join(partes_nombre[:-1])  # Asumiendo que el nombre está antes del ID
 
-            # Obtener la extensión del archivo
-            extension = 'jpg'  # Cambia esto según el formato de tus imágenes
+            # Crear el nombre de la imagen detectada, ID de detección será asignado en CodeIgniter
+            extension = 'jpg'
+            nombre_imagen_detectada = f"temp_{nombre_criminal}.{extension}"
 
-            # Crear el nombre del archivo detectado en el formato idCriminal_nombrecriminal.extensión
-            nombre_imagen_detectada = f"{nombre_criminal}.{extension}"
+            # Mover la imagen a la carpeta temporal para ser procesada luego
             ruta_imagen_destino = os.path.join(RUTA_IMAGENES_DETECTADOS, nombre_imagen_detectada)
-
-            # Mover la imagen recibida a la carpeta de imágenes detectadas
             shutil.move('received_image.jpg', ruta_imagen_destino)
 
-            # Enviar solicitud para almacenar la detección en la base de datos
+            # Enviar solicitud para almacenar la detección en CodeIgniter
             respuesta = requests.post(
                 f"{URL_API_DETECCIONES}{criminal_id}/{device_id}",
                 data={
                     "confianza": confianza,
                     "latitud": latitud,
                     "longitud": longitud,
-                    "foto_deteccion": nombre_imagen_detectada
+                    "foto_deteccion": nombre_imagen_detectada  # Nombre temporal que será renombrado por CodeIgniter
                 }
             )
 
@@ -86,6 +83,7 @@ def upload_file():
     except Exception as e:
         print("Error al procesar el archivo:", str(e))
         return jsonify({"error": "Failed to process file"}), 500
+
 
 def comparar_imagen_con_base(imagen_recibida):
     try:

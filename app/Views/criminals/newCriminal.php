@@ -12,7 +12,7 @@
   <div class="card shadow-lg">
     <div class="card-body p-5">
 
-      <!-- Mensaje de error -->
+      <!-- Mensaje de error general -->
       <?php if (session()->getFlashdata('error') !== null): ?>
         <div class="alert alert-danger">
           <?= session()->getFlashdata('error'); ?>
@@ -29,16 +29,25 @@
             <div class="mb-3">
               <label for="nombre" class="form-label">Nombres</label>
               <input type="text" value="<?= old('nombre'); ?>" id="nombre" class="form-control" name="nombre" required />
+              <?php if (isset($validation) && $validation->hasError('nombre')): ?>
+                <div class="text-danger"><?= $validation->getError('nombre'); ?></div>
+              <?php endif; ?>
             </div>
 
             <div class="mb-3">
               <label for="alias" class="form-label">Alias</label>
               <input type="text" value="<?= old('alias'); ?>" id="alias" class="form-control" name="alias" required />
+              <?php if (isset($validation) && $validation->hasError('alias')): ?>
+                <div class="text-danger"><?= $validation->getError('alias'); ?></div>
+              <?php endif; ?>
             </div>
 
             <div class="mb-3">
               <label for="ci" class="form-label">Número de CI</label>
               <input type="text" value="<?= old('ci'); ?>" id="ci" class="form-control" name="ci" required />
+              <?php if (isset($validation) && $validation->hasError('ci')): ?>
+                <div class="text-danger"><?= $validation->getError('ci'); ?></div>
+              <?php endif; ?>
             </div>
 
             <!-- Fotos: múltiple selección -->
@@ -46,38 +55,47 @@
               <label for="foto" class="form-label">Fotos</label>
               <input type="file" id="foto" class="form-control" name="fotos[]" multiple required />
               <small class="text-muted">Formatos permitidos: JPG, JPEG, PNG. Tamaño máximo: 2MB por foto.</small>
+              <?php if (isset($validation) && $validation->hasError('fotos')): ?>
+                <div class="text-danger"><?= $validation->getError('fotos'); ?></div>
+              <?php endif; ?>
             </div>
           </div>
 
           <!-- Columna derecha -->
           <div class="col-md-6">
-
-          
-          <div class="mb-3">
-    <label for="delitos" class="form-label">Delitos</label>
-    <select id="delitos" class="form-control" name="delitos[]" multiple size="3" required>
-    <?php foreach ($delitos as $delito): ?>
-        <option value="<?= esc($delito['idDelito']); ?>"><?= esc($delito['tipo']); ?></option>
-    <?php endforeach; ?>
-</select>
-
-    <small class="text-muted">Puedes seleccionar múltiples delitos usando Ctrl (Cmd en Mac).</small>
-</div>
-
+            <div class="mb-3">
+              <label for="delitos" class="form-label">Delitos</label>
+              <select id="delitos" class="form-control" name="delitos[]" multiple size="3" required>
+                <?php foreach ($delitos as $delito): ?>
+                  <option value="<?= esc($delito['idDelito']); ?>" <?= in_array($delito['idDelito'], old('delitos', [])) ? 'selected' : ''; ?>>
+                    <?= esc($delito['tipo']); ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+              <small class="text-muted">Puedes seleccionar múltiples delitos usando Ctrl (Cmd en Mac).</small>
+              <?php if (isset($validation) && $validation->hasError('delitos')): ?>
+                <div class="text-danger"><?= $validation->getError('delitos'); ?></div>
+              <?php endif; ?>
+            </div>
 
             <div class="mb-3">
               <label for="razon_busqueda" class="form-label">Razón de Búsqueda</label>
               <textarea id="razon_busqueda" class="form-control" name="razon_busqueda" rows="3" required><?= old('razon_busqueda'); ?></textarea>
+              <?php if (isset($validation) && $validation->hasError('razon_busqueda')): ?>
+                <div class="text-danger"><?= $validation->getError('razon_busqueda'); ?></div>
+              <?php endif; ?>
             </div>
 
             <div class="mb-3">
-    <label for="activo" class="form-label">Activo</label>
-    <select id="activo" class="form-select" name="activo" required>
-        <option value="1">Sí</option>
-        <option value="0">No</option>
-    </select>
-</div>
-
+              <label for="activo" class="form-label">Activo</label>
+              <select id="activo" class="form-select" name="activo" required>
+                  <option value="1">Sí</option>
+                  <option value="0">No</option>
+              </select>
+              <?php if (isset($validation) && $validation->hasError('activo')): ?>
+                <div class="text-danger"><?= $validation->getError('activo'); ?></div>
+              <?php endif; ?>
+            </div>
           </div>
         </div>
 

@@ -27,7 +27,7 @@ class NotificationModel extends Model
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
-    protected $createdField  = 'fecha_en';
+    protected $createdField  = null;
     protected $updatedField  = null;
     /*protected $deletedField  = 'deleted_at';
 

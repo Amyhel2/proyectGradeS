@@ -4,15 +4,15 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class DelitosModel extends Model
+class CriminalDelitosModel extends Model
 {
-    protected $table            = 'delitos';
-    protected $primaryKey       = 'idDelito';
+    protected $table            = 'criminal_delitos';
+    protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields = ['tipo', 'descripcion', 'gravedad', 'estado'];
+    protected $allowedFields = ['criminal_id', 'delito_id'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -48,6 +48,3 @@ class DelitosModel extends Model
 
     
 }
-
-
-

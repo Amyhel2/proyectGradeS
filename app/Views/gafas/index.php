@@ -20,18 +20,25 @@
         <table id="example1" class="table table-striped table-hover table-sm" aria-describedby="titulo">
             <thead class="bg-primary table-dark text-center">
                 <tr>
-                    <th>ID</th>
-                    <th>ID Oficial</th>
+                <th>#</th>
+                    <!--<th>ID</th>
+                    <th>ID Oficial</th>-->
+                    <th>Oficial</th>
                     <th>ID de Dispositivo</th>
                     <th>Activo</th>
                     <th>Opciones</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($gafas as $gafa): ?>
+                <?php 
+                $contador = 1; // Inicializamos el contador
+                foreach ($gafas as $gafa): ?>
                 <tr class="text-center <?= $gafa['estado'] ? '' : 'table-danger'; ?>">
-                    <td><?= esc($gafa['id']); ?></td>
-                    <td><?= esc($gafa['oficial_id']); ?></td>
+                <td><?= $contador++; ?></td>    
+                <!--<td><?= esc($gafa['id']); ?></td>
+                    <td><?= esc($gafa['oficial_id']); ?></td>-->
+                    <td><?= esc($gafa['nombre_oficial']); ?></td>
+
                     <td><?= esc($gafa['device_id']); ?></td>
                     <td>
                         <?= $gafa['estado'] ? '<span class="badge badge-success">Sí</span>' : '<span class="badge badge-danger">No</span>'; ?>
@@ -154,7 +161,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($gafasDeshabilitadas as $gafaDeshabilitada): ?>
+
+                        <?php 
+                        
+                        foreach ($gafasDeshabilitadas as $gafaDeshabilitada): ?>
                         <tr>
                             <td><?= esc($gafaDeshabilitada['id']); ?></td>
                             <td><?= esc($gafaDeshabilitada['oficial_id']); ?></td>

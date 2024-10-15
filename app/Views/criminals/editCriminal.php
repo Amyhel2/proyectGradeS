@@ -58,17 +58,21 @@
                     </div>
 
                     <div class="col-md-6">
-                        <!-- Checkbox para seleccionar múltiples delitos -->
-                        <div class="mb-3">
-                            <label for="delitos" class="form-label">Delitos</label>
-                            <?php foreach ($delitos as $delito): ?>
-                                <div>
-                                    <input type="checkbox" name="delitos[]" value="<?= esc($delito['idDelito']); ?>"
-                                        <?= in_array($delito['idDelito'], $delitosSeleccionados) ? 'checked' : ''; ?> />
-                                    <label><?= esc($delito['tipo']); ?></label>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
+
+                        <!-- Selección múltiple de delitos -->
+                        <!-- Selección múltiple de delitos -->
+<div class="mb-3">
+    <label for="delitos" class="form-label">Delitos</label>
+    <select name="delitos[]" multiple class="form-control">
+        <?php foreach ($todosLosDelitos as $delito): ?>
+            <option value="<?= esc($delito['idDelito']); ?>"
+                <?= in_array($delito['idDelito'], array_column($delitos, 'delito_id')) ? 'selected' : ''; ?>>
+                <?= esc($delito['tipo']); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
+
 
                         <div class="mb-3">
                             <label for="razon_busqueda" class="form-label">Razón de la búsqueda</label>

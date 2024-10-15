@@ -44,6 +44,19 @@ $routes->get('reports/detalleCriminal/(:num)', 'Reports::detalleCriminal/$1'); /
 $routes->get('reportes', 'Reports::index'); // Ver todos los reportes
 $routes->get('reporte-usuarios-pdf', 'Users::generarReportePDF'); // Generar reporte PDF de usuarios
 
+$routes->get('reports/generar-reporte-detecciones-por-periodo', 'Reports::generarReporteDeteccionesPorPeriodo');
+$routes->get('reports/criminales-detectados', 'Reports::reporteCriminalesDetectados');
+$routes->get('reports/actividad-de-oficiales', 'Reports::reporteActividadDeOficiales');
+$routes->get('reports/criminales-por-delito', 'Reports::reporteCriminalesPorDelito');
+$routes->get('reports/ubicaciones-deteccion', 'Reports::reporteUbicacionesDeteccion');
+$routes->get('reports/detecciones-por-dispositivo', 'Reports::reporteDeteccionesPorDispositivo');
+$routes->get('reports/criminales-activos-inactivos', 'Reports::reporteCriminalesActivosInactivos');
+$routes->get('reports/reincidencias', 'Reports::reporteReincidencias');
+$routes->get('reports/criminales-altas-confianzas', 'Reports::reporteCriminalesAltasConfianzas');
+$routes->get('reports/avistamientos-por-ubicacion', 'Reports::reporteAvistamientosPorUbicacion');
+
+
+
 // Rutas de seguridad y CSRF
 $routes->get('get_csrf_token', 'Security::get_csrf_token'); // Obtener token CSRF
 
@@ -59,6 +72,7 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->resource('criminals', ['placeholder' => '(:num)', 'except' => 'show']); // CRUD de criminales
 });
 $routes->get('map/showMap/(:segment)/(:segment)', 'Maps::showMap/$1/$2');
+$routes->get('detection/(:num)/images', 'Detections::verImagenDetectada/$1'); // 
 
 
 

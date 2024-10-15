@@ -20,7 +20,8 @@
         <table id="example1" class="table table-striped table-hover table-sm" aria-describedby="titulo">
             <thead class="bg-primary table-dark text-center">
                 <tr>
-                    <th>ID</th>
+                    <!--<th>ID</th>-->
+                    <th>#</th>
                     <th>Nombre Completo</th>
                     <th>CI</th>
                     <th>Rango</th>
@@ -36,9 +37,12 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($usuarios as $usuario): ?>
+                <?php
+                $contador=1;
+                foreach($usuarios as $usuario): ?>
                 <tr class="text-center">
-                    <td><?= $usuario['id']; ?></td>
+                    <!--<td><?= $usuario['id']; ?></td>-->
+                    <td><?= $contador++; ?></td>
                     <td><?= esc($usuario['nombres'] . ' ' . $usuario['apellido_paterno'] . ' ' . $usuario['apellido_materno']); ?></td>
                     <td><?= esc($usuario['ci']); ?></td>
                     <td><?= esc($usuario['rango']); ?></td>

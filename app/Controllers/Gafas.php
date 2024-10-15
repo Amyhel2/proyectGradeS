@@ -9,9 +9,11 @@ class Gafas extends BaseController
 {
     public function index()
     {
+        
         $gafasModel = new GafasModel();
         $data['gafas'] = $gafasModel->where('estado', 1)->findAll();
-
+        
+        $data['gafas'] = $gafasModel->getGafasConOficiales();
         // Obtener solo las gafas desactivadas 
         $data['gafasDeshabilitadas'] = $gafasModel->where('estado', 0)->findAll();
 

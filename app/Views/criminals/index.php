@@ -20,7 +20,8 @@
         <table id="example1" class="table table-striped table-hover table-sm" aria-describedby="titulo">
             <thead class="bg-primary table-dark text-center">
                 <tr>
-                    <th>ID</th>
+                    <!--<th>ID</th>-->
+                    <th>#</th>
                     <th>Nombre</th>
                     <th>Alias</th>
                     <th>CI</th>
@@ -32,21 +33,22 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($criminales as $criminal): ?>
+                <?php 
+                $contador=1;
+                foreach ($criminales as $criminal): ?>
                 <tr class="text-center <?= $criminal['activo'] ? '' : 'table-danger'; ?>">
-                    <td><?= esc($criminal['idCriminal']); ?></td>
+                    <!--<td><?= esc($criminal['idCriminal']); ?></td>-->
+                    <td><?= $contador++; ?></td>
                     <td><?= esc($criminal['nombre']); ?></td>
                     <td><?= esc($criminal['alias']); ?></td>
                     <td><?= esc($criminal['ci']); ?></td>
                     <td><?= esc($criminal['delitos']); ?></td>
                     <td><?= esc($criminal['razon_busqueda']); ?></td>
-
                     <td>
-    <a href="<?= base_url('criminals/' . $criminal['idCriminal'] . '/images'); ?>" class="btn btn-info btn-sm">
-        <i class="fas fa-images"></i> Ver Fotos
-    </a>
-</td>
-
+                        <a href="<?= base_url('criminals/' . $criminal['idCriminal'] . '/images'); ?>" class="btn btn-info btn-sm">
+                            <i class="fas fa-images"></i> Ver Fotos
+                        </a>
+                    </td>
                     <td>
                         <?= $criminal['activo'] ? '<span class="badge badge-success">Sí</span>' : '<span class="badge badge-danger">No</span>'; ?>
                     </td>
@@ -74,6 +76,7 @@
     </div>
 </div>
 
+<!-- Modales para eliminar, deshabilitar y habilitar -->
 <!-- Modal de eliminación física -->
 <div class="modal fade" id="eliminaModal" tabindex="-1" role="dialog" aria-labelledby="eliminaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -115,10 +118,12 @@
             <div class="modal-footer">
                 <form id="form-deshabilitar" action="" method="POST">
                     <?= csrf_field(); ?>
+                
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-warning">Deshabilitar</button>
                 </form>
             </div>
+            
         </div>
     </div>
 </div>
@@ -152,29 +157,29 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header bg-info text-white">
-                <h5 class="modal-title" id="verDesactivadosModalLabel">Criminales</h5>
+                <h5 class="modal-title" id="verDesactivadosModalLabel">Criminales Desactivados</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <table class="table table-striped">
+                <table class="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nombre</th>
-                            <th>Delitos</th>
+                            <th>Alias</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($criminalesDeshabilitados as $criminalDeshabilitado): ?>
+                        <?php foreach ($criminalesDeshabilitados as $criminal): ?>
                         <tr>
-                            <td><?= esc($criminalDeshabilitado['idCriminal']); ?></td>
-                            <td><?= esc($criminalDeshabilitado['nombre']); ?></td>
-                            <td><?= esc($criminalDeshabilitado['delitos']); ?></td>
+                            <td><?= esc($criminal['idCriminal']); ?></td>
+                            <td><?= esc($criminal['nombre']); ?></td>
+                            <td><?= esc($criminal['alias']); ?></td>
                             <td>
-                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#habilitarModal" data-url="<?= base_url('criminals/' . $criminalDeshabilitado['idCriminal'] . '/habilitar'); ?>">
+                            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#habilitarModal" data-url="<?= base_url('criminals/' . $criminal['idCriminal'] . '/habilitar'); ?>">
                                     <i class="fas fa-check"></i> Habilitar
                                 </button>
                             </td>
@@ -183,10 +188,15 @@
                     </tbody>
                 </table>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
         </div>
     </div>
 </div>
+
 <?= $this->endSection(); ?>
+
 
 <?= $this->section('script'); ?>
 

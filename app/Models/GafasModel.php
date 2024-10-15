@@ -53,4 +53,11 @@ class GafasModel extends Model
                     ->groupBy('oficial_id')
                     ->findAll();
     }
+
+    public function getGafasConOficiales()
+    {
+        return $this->select('gafas.*, users.nombres AS nombre_oficial')
+                    ->join('users', 'users.id = gafas.oficial_id', 'left') // Cambia 'oficiales.id' según tu esquema
+                    ->findAll();
+    }
 }
