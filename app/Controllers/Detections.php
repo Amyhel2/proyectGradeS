@@ -19,68 +19,83 @@ class Detections extends BaseController
     }
 
     public function almacenarDeteccion($criminalId, $deviceId)
-    {
-        $modelo = new DetectionModel();
-        $gafaModel = new GafasModel();
+{
+    $modelo = new DetectionModel();
+    $gafaModel = new GafasModel();
+    $notificationModel = new \App\Models\NotificationModel(); // Asegúrate de cargar el modelo de notificaciones
     
-        // Obtener el oficial_id usando el device_id
-        $gafa = $gafaModel->where('device_id', $deviceId)->first();
-        $oficialId = $gafa['oficial_id'] ?? null;
-    
-        // Verificar si criminalId y oficialId son válidos
-        if (empty($criminalId) || empty($oficialId)) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'ID de criminal u oficial inválido.']);
-        }
-    
-        // Obtener el porcentaje de confianza, latitud, longitud y foto_deteccion desde la solicitud
-        $confianza = $this->request->getPost('confianza') ?? null;
-        $latitud = $this->request->getPost('latitud') ?? null;
-        $longitud = $this->request->getPost('longitud') ?? null;
-        $foto_deteccion = $this->request->getPost('foto_deteccion') ?? null;
-    
-        // Validar los valores recibidos
-        if (empty($confianza) || empty($latitud) || empty($longitud) || empty($foto_deteccion)) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Datos incompletos proporcionados.']);
-        }
-    
-        // Datos de la detección
-        $data = [
-            'criminal_id' => $criminalId,
-            'oficial_id' => $oficialId,
-            'fecha_deteccion' => date('Y-m-d H:i:s'),
-            'ubicacion' => "$latitud, $longitud",
-            'confianza' => $confianza,
-        ];
-    
-        // Intentar insertar la detección en la base de datos
-        try {
-            // Inserta la detección y obtiene el ID de detección
-            $modelo->insert($data);
-            $idDeteccion = $modelo->insertID(); // Obtiene el ID de la última inserción
-    
-            // Crear el nuevo nombre en el formato idDeteccion_nombreCriminal.extensión
-            $partes_nombre = explode("_", basename($foto_deteccion)); 
-            array_shift($partes_nombre); // Eliminar el primer elemento (ID)
-            $nombre_criminal = implode("_", $partes_nombre); // Unir el resto como nombre del criminal
-            $extension = pathinfo($foto_deteccion, PATHINFO_EXTENSION);
-            $nuevo_nombre_foto = "{$idDeteccion}_{$nombre_criminal}";
-    
-            // Mover el archivo temporal a su ruta final con el nuevo nombre
-            $ruta_imagen_temp = "C:/xampp/htdocs/proyectGradeS/public/uploads/ImagenesCriminalesDetectados/{$foto_deteccion}";
-            $ruta_imagen_destino = "C:/xampp/htdocs/proyectGradeS/public/uploads/ImagenesCriminalesDetectados/{$nuevo_nombre_foto}";
-    
-            if (!@rename($ruta_imagen_temp, $ruta_imagen_destino)) {
-                throw new \Exception('Error al mover la imagen detectada.');
-            }
-    
-            // Guardar el nuevo nombre de la imagen en la base de datos
-            $modelo->update($idDeteccion, ['foto_deteccion' => $nuevo_nombre_foto]);
-    
-            return $this->response->setJSON(['status' => 'success', 'message' => 'Detección almacenada correctamente.']);
-        } catch (\Exception $e) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Error al almacenar la detección: ' . $e->getMessage()]);
-        }
+    // Obtener el oficial_id usando el device_id
+    $gafa = $gafaModel->where('device_id', $deviceId)->first();
+    $oficialId = $gafa['oficial_id'] ?? null;
+
+    // Verificar si criminalId y oficialId son válidos
+    if (empty($criminalId) || empty($oficialId)) {
+        return $this->response->setJSON(['status' => 'error', 'message' => 'ID de criminal u oficial inválido.']);
     }
+
+    // Obtener el porcentaje de confianza, latitud, longitud y foto_deteccion desde la solicitud
+    $confianza = $this->request->getPost('confianza') ?? null;
+    $latitud = $this->request->getPost('latitud') ?? null;
+    $longitud = $this->request->getPost('longitud') ?? null;
+    $foto_deteccion = $this->request->getPost('foto_deteccion') ?? null;
+
+    // Validar los valores recibidos
+    if (empty($confianza) || empty($latitud) || empty($longitud) || empty($foto_deteccion)) {
+        return $this->response->setJSON(['status' => 'error', 'message' => 'Datos incompletos proporcionados.']);
+    }
+
+    // Datos de la detección
+    $data = [
+        'criminal_id' => $criminalId,
+        'oficial_id' => $oficialId,
+        'fecha_deteccion' => date('Y-m-d H:i:s'),
+        'ubicacion' => "$latitud, $longitud",
+        'confianza' => $confianza,
+    ];
+
+    try {
+        // Inserta la detección y obtiene el ID de detección
+        $modelo->insert($data);
+        $idDeteccion = $modelo->insertID(); // Obtiene el ID de la última inserción
+
+        // Crear el nuevo nombre en el formato idDeteccion_nombreCriminal.extensión
+        $partes_nombre = explode("_", basename($foto_deteccion));
+        array_shift($partes_nombre); // Eliminar el primer elemento (ID)
+        $nombre_criminal = implode("_", $partes_nombre); // Unir el resto como nombre del criminal
+        
+        $nuevo_nombre_foto = "{$idDeteccion}_{$nombre_criminal}";
+
+        // Mover el archivo temporal a su ruta final con el nuevo nombre
+        $ruta_imagen_temp = "C:/xampp/htdocs/proyectGradeS/public/uploads/ImagenesCriminalesDetectados/{$foto_deteccion}";
+        $ruta_imagen_destino = "C:/xampp/htdocs/proyectGradeS/public/uploads/ImagenesCriminalesDetectados/{$nuevo_nombre_foto}";
+
+        if (!@rename($ruta_imagen_temp, $ruta_imagen_destino)) {
+            throw new \Exception('Error al mover la imagen detectada.');
+        }
+
+        // Guardar el nuevo nombre de la imagen en la base de datos
+        $modelo->update($idDeteccion, ['foto_deteccion' => $nuevo_nombre_foto]);
+
+        // Crear el mensaje de la notificación
+        $mensaje_notificacion = "Criminal detectado: {$nombre_criminal}. Confianza: {$confianza}%. Ubicación: {$latitud}, {$longitud}.";
+
+        // Insertar notificación en la tabla 'notifications'
+        $notificationData = [
+            'deteccion_id' => $idDeteccion,
+            'oficial_id' => $oficialId,
+            'mensaje' => $mensaje_notificacion,
+            'fecha_envio' => date('Y-m-d H:i:s'),
+            'estado' => 'enviada', // Estado inicial
+        ];
+
+        $notificationModel->insert($notificationData);
+
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Detección y notificación almacenadas correctamente.']);
+    } catch (\Exception $e) {
+        return $this->response->setJSON(['status' => 'error', 'message' => 'Error al almacenar la detección: ' . $e->getMessage()]);
+    }
+}
+
     
 
 

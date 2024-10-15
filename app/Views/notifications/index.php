@@ -19,7 +19,7 @@
             <tbody>
                 <?php foreach($notificaciones as $notificacion): ?>
                 <tr class="text-center">
-                    <td><?= $notificacion['id']; ?></td>
+                    <td><?= $notificacion['idNotificacion']; ?></td>
                     <td><?= esc($notificacion['mensaje']); ?></td>
                     <td><?= esc($notificacion['fecha_envio']); ?></td>
                     <td><?= esc($notificacion['estado']); ?></td>

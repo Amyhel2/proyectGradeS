@@ -13,7 +13,7 @@ class NotificationModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields = [
-        'deteccion_id', 'oficial_id', 'mensaje', 'estado','fecha_envio'
+        'deteccion_id', 'oficial_id','tipo_notificacion', 'mensaje', 'estado','fecha_envio'
     ];
 
     
