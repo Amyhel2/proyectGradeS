@@ -1,68 +1,123 @@
-# CodeIgniter 4 Application Starter
+# **Sistema de Reconocimiento Facial para Seguridad Pública**
 
-## What is CodeIgniter?
+Este proyecto implementa un **Sistema de Reconocimiento Facial en Tiempo Real** diseñado para apoyar a las fuerzas de seguridad pública en la identificación automática de criminales. Utilizando una combinación de tecnologías como **ESP32-CAM**, **Python**, y **CodeIgniter 4**, el sistema facilita la captura, procesamiento y comparación de imágenes, enviando notificaciones en tiempo real cuando se detectan coincidencias.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## **Tabla de Contenidos**
+1. [Descripción General](#descripción-general)
+2. [Características Principales](#características-principales)
+3. [Componentes Electrónicos](#componentes-electrónicos)
+4. [Requisitos del Sistema](#requisitos-del-sistema)
+5. [Instalación](#instalación)
+6. [Uso](#uso)
+7. [Estructura del Proyecto](#estructura-del-proyecto)
+8. [Contribuciones](#contribuciones)
+9. [Licencia](#licencia)
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## **Descripción General**
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+Este sistema de reconocimiento facial está diseñado para mejorar las operaciones de las fuerzas de seguridad pública mediante el uso de tecnologías avanzadas de procesamiento de imágenes. Permite la detección de rostros en tiempo real a través de cámaras incorporadas en gafas inteligentes (**ESP32-CAM**) y envía notificaciones automáticas a los oficiales cuando se identifica un criminal.
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+El sistema incluye una plataforma web para la gestión de criminales, delitos y oficiales, y permite la generación de reportes detallados sobre la actividad delictiva detectada.
 
-## Installation & updates
+## **Características Principales**
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+- **Detección Facial en Tiempo Real**: Utiliza cámaras **ESP32-CAM** para capturar imágenes de rostros en tiempo real y comparar esas imágenes con una base de datos de criminales.
+- **Gestión de Criminales y Delitos**: Administra información de criminales, asociando múltiples delitos a cada individuo.
+- **Notificaciones Automáticas**: Al detectar una coincidencia, el sistema notifica automáticamente al oficial asociado, permitiendo una respuesta rápida.
+- **Reportes Avanzados**: Genera informes sobre las ubicaciones más frecuentes de detección, las actividades delictivas detectadas por período, y el rendimiento de los oficiales.
+- **Sistema de Autenticación**: Implementa un control de acceso basado en roles (RBAC) para administrar diferentes niveles de acceso para los usuarios (administradores y oficiales).
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+## **Componentes Electrónicos**
 
-## Setup
+- **ESP32-CAM**: Dispositivo integrado con una cámara para la captura de imágenes en tiempo real.
+- **Sensores Adicionales**: Opcionalmente, el sistema puede integrarse con sensores GPS para proporcionar información de ubicación precisa en cada detección.
+- **Servidor Flask en Python**: Procesa las imágenes capturadas por el **ESP32-CAM** para realizar la comparación de rostros con la base de datos de criminales.
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+Estos componentes electrónicos son esenciales para la operación del sistema, facilitando la captura y transmisión de imágenes para su procesamiento en la plataforma web.
 
-## Important Change with index.php
+## **Requisitos del Sistema**
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+Para garantizar el correcto funcionamiento del proyecto, asegúrate de que tu entorno cumpla con los siguientes requisitos:
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+### **Software**
+- **PHP 7.4+** (para el backend en **CodeIgniter 4**)
+- **MySQL** (para la base de datos)
+- **Composer** (gestor de dependencias de PHP)
+- **Python 3.9** (para el procesamiento de imágenes con **Flask**)
+- **Docker** (opcional, para contenerización)
 
-**Please** read the user guide for a better explanation of how CI4 works!
+### **Hardware**
+- **ESP32-CAM**: Dispositivo para la captura de imágenes.
+- **Servidor Local**: Servidor para alojar la aplicación web y procesar solicitudes en tiempo real.
 
-## Repository Management
+## **Instalación**
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+Para instalar y configurar el proyecto en tu entorno local, sigue estos pasos:
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+1. **Clonar el Repositorio**
+    ```bash
+    git clone https://github.com/usuario/tu-proyecto.git
+    ```
+2. **Navegar al Directorio del Proyecto**
+    ```bash
+    cd tu-proyecto
+    ```
+3. **Instalar las Dependencias PHP**
+    ```bash
+    composer install
+    ```
+4. **Configurar el Archivo `.env`**
+    - Edita el archivo `.env` para añadir las configuraciones de base de datos, rutas y otras variables de entorno necesarias.
 
-## Server Requirements
+5. **Ejecutar Migraciones de Base de Datos**
+    ```bash
+    php spark migrate
+    ```
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+6. **Iniciar el Servidor Local**
+    ```bash
+    php spark serve
+    ```
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+7. **Configurar el Servidor Flask**
+    - Navega a la carpeta del servidor Flask para reconocimiento facial y ejecuta los siguientes comandos:
+    ```bash
+    python app.py
+    ```
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+## **Uso**
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+### **Acceso al Panel de Control**
+- Accede al panel administrativo a través de la URL `http://localhost:8080/admin`. 
+- Desde el panel, podrás gestionar criminales, delitos, oficiales, y generar reportes.
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+### **Conectar Dispositivos ESP32-CAM**
+- Conecta las cámaras **ESP32-CAM** que capturarán imágenes en tiempo real y las enviarán para su procesamiento.
+- Las imágenes capturadas se compararán automáticamente con la base de datos de criminales.
+
+### **Generación de Reportes**
+- Los reportes se pueden generar desde el panel administrativo. Estos reportes incluyen información detallada sobre las detecciones realizadas, ubicaciones más frecuentes, y el rendimiento de los oficiales.
+
+## **Estructura del Proyecto**
+
+El proyecto sigue una estructura organizada para mantener la separación de responsabilidades:
+
+- **/app/Controllers**: Lógica de negocio y manejo de solicitudes HTTP.
+- **/app/Models**: Modelos que interactúan con las tablas de la base de datos.
+- **/app/Views**: Plantillas HTML para las vistas del sistema.
+- **/public/uploads**: Almacena las imágenes subidas, incluidas las imágenes de criminales y las detecciones realizadas.
+- **/python_scripts**: Scripts de Python utilizados para el reconocimiento facial y otras tareas de procesamiento de imágenes.
+
+## **Contribuciones**
+
+Las contribuciones son bienvenidas. Si deseas mejorar el proyecto, sigue estos pasos:
+
+1. **Haz un fork** del repositorio.
+2. **Crea una nueva rama** para tu funcionalidad (`git checkout -b feature/nueva-funcionalidad`).
+3. Realiza los cambios necesarios y **haz commit** (`git commit -am 'Añadir nueva funcionalidad'`).
+4. **Envía tus cambios** a tu repositorio (`git push origin feature/nueva-funcionalidad`).
+5. Abre un **pull request** para que tus cambios sean revisados.
+
+## **Licencia**
+
+.
