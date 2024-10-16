@@ -108,15 +108,7 @@ El proyecto sigue una estructura organizada para mantener la separación de resp
 - **/public/uploads**: Almacena las imágenes subidas, incluidas las imágenes de criminales y las detecciones realizadas.
 - **/python_scripts**: Scripts de Python utilizados para el reconocimiento facial y otras tareas de procesamiento de imágenes.
 
-## **Contribuciones**
 
-Las contribuciones son bienvenidas. Si deseas mejorar el proyecto, sigue estos pasos:
-
-1. **Haz un fork** del repositorio.
-2. **Crea una nueva rama** para tu funcionalidad (`git checkout -b feature/nueva-funcionalidad`).
-3. Realiza los cambios necesarios y **haz commit** (`git commit -am 'Añadir nueva funcionalidad'`).
-4. **Envía tus cambios** a tu repositorio (`git push origin feature/nueva-funcionalidad`).
-5. Abre un **pull request** para que tus cambios sean revisados.
 
 ## **Licencia**
 
