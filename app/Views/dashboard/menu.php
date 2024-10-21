@@ -2,7 +2,7 @@
   <!-- Brand Logo -->
   <a href="<?= base_url('start'); ?>" class="brand-link">
     <img src="<?php echo base_url('assets/dist/img/AdminLTELogo.png'); ?>" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .9">
-    <span class="brand-text font-weight-light">SistemPro</span>
+    <span class="brand-text font-weight-light">CrimWatcher</span>
   </a>
 
   <!-- Sidebar -->

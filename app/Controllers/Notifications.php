@@ -1,90 +1,75 @@
-<?php
+<?php 
 
 namespace App\Controllers;
-use CodeIgniter\Files\File;
-use CodeIgniter\API\ResponseTrait;
+
 use App\Controllers\BaseController;
-use App\Models\DetectionModel;
 use App\Models\NotificationModel;
+use App\Models\GafasModel;
+use App\Models\UsersModel;
+use Twilio\Rest\Client;
 
 class Notifications extends BaseController
 {
-    
+    protected $notificationModel;
+    protected $gafasModel;
+
+    public function __construct()
+    {
+        $this->notificationModel = new NotificationModel();
+        $this->gafasModel = new GafasModel();
+    }
 
     public function index()
     {
-        $notificationModel = new NotificationModel();
-        $data['notificaciones'] = $notificationModel->findAll(); // Trae todas las notificaciones
-
-        return view('notifications/index', $data);  // Carga la vista con los datos
+        $data['notificaciones'] = $this->notificationModel->findAll();
+        return view('notifications/index', $data);
     }
 
-    public function recibir()
-    {
-        // Recibimos los datos JSON enviados desde el servidor Flask
-        $json = $this->request->getJSON(true);
+    public function enviarNotificacionDeteccion($idDeteccion, $oficialId, $confianza, $latitud, $longitud, $foto_deteccion)
+{
+    $notificationModel = new NotificationModel();
+    $gafaModel = new GafasModel();
+    $usersModel = new UsersModel();
 
-        // Verificamos si se detectó un criminal
-        if (isset($json['criminal_detected']) && $json['criminal_detected'] === true) {
-            // Obtener detalles del criminal y el oficial
-            $nombreCriminal = $json['nombre_criminal'];
-            $oficial_id = $this->getOficialId();
-            $criminal_id = $this->getCriminalId($nombreCriminal);
+    // Obtener el teléfono del oficial desde la tabla 'users'
+    $usuario = $usersModel->where('id', $oficialId)->first();
+    $oficialPhone = $usuario['celular'] ?? null;
 
-            if ($criminal_id && $oficial_id) {
-                // Insertar en la tabla de detecciones
-                $detectionModel = new DetectionModel();
-                $detectionData = [
-                    'criminal_id' => $criminal_id,
-                    'oficial_id' => $oficial_id,
-                    'fecha_deteccion' => date('Y-m-d H:i:s'),
-                    'ubicacion' => 'Ubicación no especificada', // Aquí puedes agregar la ubicación real si está disponible
-                    'confianza' => 0.95 // Nivel de confianza
-                ];
-                $detectionModel->insert($detectionData);
-
-                // Insertar en la tabla de notificaciones
-                $notificationModel = new NotificationModel();
-                $notificationData = [
-                    'deteccion_id' => $detectionModel->getInsertID(),
-                    'oficial_id' => $oficial_id,
-                    'mensaje' => "¡Atención! Se ha detectado al criminal: " . $nombreCriminal,
-                    'fecha_envio' => date('Y-m-d H:i:s'),
-                    'estado' => 'enviada'
-                ];
-                $notificationModel->insert($notificationData);
-
-                return $this->respond(['status' => 'success', 'message' => 'Notificación enviada'], 200);
-            } else {
-                return $this->respond(['status' => 'error', 'message' => 'Criminal o oficial no encontrado'], 404);
-            }
-        } else {
-            return $this->respond(['status' => 'success', 'message' => 'No se detectó ningún criminal'], 200);
-        }
+    if (empty($oficialPhone)) {
+        throw new \Exception('Teléfono del oficial no disponible.');
     }
 
+    // Generar el mensaje de notificación
+    $mensaje = "Criminal detectado. Confianza: {$confianza}%. Ubicación: {$latitud}, {$longitud}.";
 
-    
+    // Insertar notificación en la base de datos
+    $notificationData = [
+        'deteccion_id' => $idDeteccion,
+        'oficial_id' => $oficialId,
+        'mensaje' => $mensaje,
+        'fecha_envio' => date('Y-m-d H:i:s'),
+        'estado' => 'enviada',
+    ];
+    $notificationModel->insert($notificationData);
 
-    private function getOficialId()
-    {
-        // Método para obtener el ID del oficial actual desde la sesión o algún identificador
-        return session()->get('userid'); // Ejemplo, reemplaza con tu lógica
-    }
-
-    private function getCriminalId($nombreCriminal)
-    {
-        // Obtener el ID del criminal basado en el nombre
-        $db = \Config\Database::connect();
-        $builder = $db->table('criminals');  // Reemplaza con el nombre real de tu tabla
-        $criminal = $builder->where('nombre', $nombreCriminal)->get()->getRow();
-
-        if ($criminal) {
-            return $criminal->id;  // Retorna el ID del criminal encontrado
-        } else {
-            return null;  // Maneja el caso en que no se encuentra el criminal
-        }
-    }
+    // Enviar la notificación por WhatsApp
+    $this->sendWhatsAppNotification($oficialPhone, $mensaje);
 }
 
+    private function sendWhatsAppNotification($phone, $message)
+    {
+        $sid = getenv('TWILIO_ACCOUNT_SID');
+        $token = getenv('TWILIO_AUTH_TOKEN');
+        $twilioNumber = getenv('TWILIO_PHONE_NUMBER');
 
+        $client = new Client($sid, $token);
+
+        $client->messages->create(
+            'whatsapp:' . $phone, 
+            [
+                'from' => 'whatsapp:' . $twilioNumber,
+                'body' => $message,
+            ]
+        );
+    }
+}

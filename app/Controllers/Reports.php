@@ -14,126 +14,123 @@ class Reports extends BaseController
         return view('reports/index');
     }
 
+    // Método reutilizable para generar PDFs
+    private function generarPDF($view, $data, $nombreArchivo)
+    {
+        // Renderizar la vista a HTML
+        $html = view($view, $data);
+
+        // Configuración de Dompdf
+        $dompdf = new \Dompdf\Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape'); // Tamaño del papel y orientación
+        $dompdf->render();
+
+        // Descargar el archivo PDF
+        $dompdf->stream($nombreArchivo . '.pdf', ['Attachment' => true]);
+    }
+
     public function generarReporteDeteccionesPorPeriodo()
-{
-    $detectionModel = new DetectionModel();
-    $data['detecciones'] = $detectionModel->select('DATE(fecha_deteccion) as fecha_deteccion, COUNT(*) as total')
-                                        ->groupBy('DATE(fecha_deteccion)')
-                                        ->orderBy('fecha_deteccion', 'DESC')
-                                        ->findAll();
+    {
+        $detectionModel = new DetectionModel();
+        $data['detecciones'] = $detectionModel->select('DATE(fecha_deteccion) as fecha_deteccion, COUNT(*) as total')
+                                              ->groupBy('DATE(fecha_deteccion)')
+                                              ->orderBy('fecha_deteccion', 'DESC')
+                                              ->findAll();
 
-
-    // Cargar la vista con los datos para el PDF
-    $html = view('reports/pdf/detecciones_por_periodo', $data);
-
-    // Instanciar Dompdf
-    $dompdf = new \Dompdf\Dompdf();
-    $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4', 'landscape'); // Cambia a 'portrait' si prefieres vertical
-    $dompdf->render();
-    $dompdf->stream('reporte_detecciones_por_periodo.pdf', ['Attachment' => true]); // Para forzar la descarga
-}
-
+        $this->generarPDF('reports/detecciones_por_periodo', $data, 'reporte_detecciones_por_periodo');
+    }
 
     public function reporteCriminalesDetectados()
     {
-        // Lógica para obtener criminales detectados
         $detectionModel = new DetectionModel();
         $data['criminales'] = $detectionModel->select('criminal_id, COUNT(*) as total')
-                                               ->groupBy('criminal_id')
-                                               ->orderBy('total', 'DESC')
-                                               ->findAll();
-        
-        return view('reports/criminales_detectados', $data);
+                                             ->join('criminals', 'criminals.idCriminal = detections.criminal_id')
+                                             ->groupBy('criminal_id')
+                                             ->orderBy('total', 'DESC')
+                                             ->findAll();
+
+        $this->generarPDF('reports/criminales_detectados', $data, 'reporte_criminales_detectados');
     }
 
     public function reporteActividadDeOficiales()
     {
-        // Lógica para obtener la actividad de los oficiales
         $detectionModel = new DetectionModel();
-        $data['actividad'] = $detectionModel->select('oficial_id, COUNT(*) as total')
-                                             ->groupBy('oficial_id')
-                                             ->orderBy('total', 'DESC')
-                                             ->findAll();
+        $data['actividad'] = $detectionModel->select('users.nombres, COUNT(detections.idDeteccion) as total')
+                                            ->join('users', 'users.id = detections.oficial_id')
+                                            ->groupBy('users.id')
+                                            ->orderBy('total', 'DESC')
+                                            ->findAll();
 
-        return view('reports/actividad_de_oficiales', $data);
+        $this->generarPDF('reports/actividad_de_oficiales', $data, 'reporte_actividad_de_oficiales');
     }
 
     public function reporteCriminalesPorDelito()
     {
-        // Lógica para obtener criminales por delito
         $criminalsModel = new CriminalsModel();
-        $data['criminales_por_delito'] = $criminalsModel->select('delitos, COUNT(*) as total')
-                                                          ->groupBy('delitos')
-                                                          ->findAll();
-        
-        return view('reports/criminales_por_delito', $data);
+        $data['criminales_por_delito'] = $criminalsModel->select('delitos.tipo, COUNT(criminals.idCriminal) as total')
+                                                        ->join('criminal_delitos', 'criminals.idCriminal = criminal_delitos.criminal_id')
+                                                        ->join('delitos', 'delitos.idDelito = criminal_delitos.delito_id')
+                                                        ->groupBy('delitos.tipo')
+                                                        ->findAll();
+
+        $this->generarPDF('reports/criminales_por_delito', $data, 'reporte_criminales_por_delito');
     }
 
     public function reporteUbicacionesDeteccion()
     {
-        // Lógica para obtener ubicaciones de detección
         $detectionModel = new DetectionModel();
         $data['ubicaciones'] = $detectionModel->select('ubicacion, COUNT(*) as total')
-                                                ->groupBy('ubicacion')
-                                                ->orderBy('total', 'DESC')
-                                                ->findAll();
+                                              ->groupBy('ubicacion')
+                                              ->orderBy('total', 'DESC')
+                                              ->findAll();
 
-        return view('reports/ubicaciones_deteccion', $data);
+        $this->generarPDF('reports/ubicaciones_deteccion', $data, 'reporte_ubicaciones_deteccion');
     }
 
     public function reporteDeteccionesPorDispositivo()
     {
-        // Lógica para obtener detecciones por dispositivo
         $detectionModel = new DetectionModel();
-        $data['deteciones_dispositivo'] = $detectionModel->select('device_id, COUNT(*) as total')
-                                                          ->groupBy('device_id')
+        $data['detecciones_dispositivo'] = $detectionModel->select('gafas.device_id, COUNT(detections.idDeteccion) as total')
+                                                          ->join('gafas', 'gafas.id = detections.oficial_id')
+                                                          ->groupBy('gafas.device_id')
                                                           ->orderBy('total', 'DESC')
                                                           ->findAll();
 
-        return view('reports/detecciones_por_dispositivo', $data);
+        $this->generarPDF('reports/detecciones_por_dispositivo', $data, 'reporte_detecciones_por_dispositivo');
     }
 
     public function reporteCriminalesActivosInactivos()
     {
-        // Lógica para obtener criminales activos e inactivos
         $criminalsModel = new CriminalsModel();
-        $data['criminales'] = $criminalsModel->findAll();
+        $data['criminales'] = $criminalsModel->select('activo, COUNT(*) as total')
+                                             ->groupBy('activo')
+                                             ->findAll();
 
-        return view('reports/criminales_activos_inactivos', $data);
+        $this->generarPDF('reports/criminales_activos_inactivos', $data, 'reporte_criminales_activos_inactivos');
     }
 
-    public function reporteReincidencias()
-    {
-        // Lógica para obtener reincidencias
-        $criminalsModel = new CriminalsModel();
-        $data['reincidencias'] = $criminalsModel->where('reincidente', 1)->findAll();
-
-        return view('reports/reincidencias', $data);
-    }
+    
 
     public function reporteCriminalesAltasConfianzas()
     {
-        // Lógica para obtener criminales con altas confianzas
         $detectionModel = new DetectionModel();
         $data['criminales'] = $detectionModel->select('criminal_id, AVG(confianza) as confianza_media')
-                                               ->groupBy('criminal_id')
-                                               ->having('confianza_media > 40') // Por ejemplo, mayor al 80%
-                                               ->findAll();
+                                             ->groupBy('criminal_id')
+                                             ->having('confianza_media > 40')
+                                             ->findAll();
 
-        return view('reports/criminales_altas_confianzas', $data);
+        $this->generarPDF('reports/criminales_altas_confianzas', $data, 'reporte_criminales_altas_confianzas');
     }
 
     public function reporteAvistamientosPorUbicacion()
     {
-        // Lógica para obtener avistamientos de criminales por ubicación
         $detectionModel = new DetectionModel();
         $data['avistamientos'] = $detectionModel->select('ubicacion, COUNT(*) as total')
-                                                 ->groupBy('ubicacion')
-                                                 ->orderBy('total', 'DESC')
-                                                 ->findAll();
+                                                ->groupBy('ubicacion')
+                                                ->orderBy('total', 'DESC')
+                                                ->findAll();
 
-        return view('reports/avistamientos_por_ubicacion', $data);
+        $this->generarPDF('reports/avistamientos_por_ubicacion', $data, 'reporte_avistamientos_por_ubicacion');
     }
 }
-

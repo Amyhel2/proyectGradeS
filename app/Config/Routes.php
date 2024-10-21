@@ -44,16 +44,19 @@ $routes->get('reports/detalleCriminal/(:num)', 'Reports::detalleCriminal/$1'); /
 $routes->get('reportes', 'Reports::index'); // Ver todos los reportes
 $routes->get('reporte-usuarios-pdf', 'Users::generarReportePDF'); // Generar reporte PDF de usuarios
 
-$routes->get('reports/generar-reporte-detecciones-por-periodo', 'Reports::generarReporteDeteccionesPorPeriodo');
-$routes->get('reports/criminales-detectados', 'Reports::reporteCriminalesDetectados');
-$routes->get('reports/actividad-de-oficiales', 'Reports::reporteActividadDeOficiales');
-$routes->get('reports/criminales-por-delito', 'Reports::reporteCriminalesPorDelito');
-$routes->get('reports/ubicaciones-deteccion', 'Reports::reporteUbicacionesDeteccion');
-$routes->get('reports/detecciones-por-dispositivo', 'Reports::reporteDeteccionesPorDispositivo');
-$routes->get('reports/criminales-activos-inactivos', 'Reports::reporteCriminalesActivosInactivos');
-$routes->get('reports/reincidencias', 'Reports::reporteReincidencias');
-$routes->get('reports/criminales-altas-confianzas', 'Reports::reporteCriminalesAltasConfianzas');
-$routes->get('reports/avistamientos-por-ubicacion', 'Reports::reporteAvistamientosPorUbicacion');
+$routes->group('reports', function($routes) {
+    $routes->get('generarReporteDeteccionesPorPeriodo', 'Reports::generarReporteDeteccionesPorPeriodo');
+    $routes->get('reporteCriminalesDetectados', 'Reports::reporteCriminalesDetectados');
+    $routes->get('reporteActividadDeOficiales', 'Reports::reporteActividadDeOficiales');
+    $routes->get('reporteCriminalesPorDelito', 'Reports::reporteCriminalesPorDelito');
+    $routes->get('reporteUbicacionesDeteccion', 'Reports::reporteUbicacionesDeteccion');
+    $routes->get('reporteDeteccionesPorDispositivo', 'Reports::reporteDeteccionesPorDispositivo');
+    $routes->get('reporteCriminalesActivosInactivos', 'Reports::reporteCriminalesActivosInactivos');
+    $routes->get('reporteReincidencias', 'Reports::reporteReincidencias');
+    $routes->get('reporteCriminalesAltasConfianzas', 'Reports::reporteCriminalesAltasConfianzas');
+    $routes->get('reporteAvistamientosPorUbicacion', 'Reports::reporteAvistamientosPorUbicacion');
+});
+
 
 
 
