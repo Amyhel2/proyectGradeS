@@ -101,6 +101,11 @@
             </div>
           </div>
         </div>
+        <?php if (session()->has('message')): ?>
+    <div class="alert alert-<?= session('message_type') ?>">
+        <?= session('message') ?>
+    </div>
+<?php endif; ?>
 
         <div class="d-flex justify-content-end mt-5">
   <a href="<?= base_url('users') ?>" class="btn btn-warning mx-1">Regresar</a>
@@ -115,6 +120,9 @@
           <?= session()->getFlashdata('errors'); ?>
         </div>
       <?php endif; ?>
+
+      
+
 
     </div>
   </div>

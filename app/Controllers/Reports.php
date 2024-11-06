@@ -30,107 +30,79 @@ class Reports extends BaseController
         $dompdf->stream($nombreArchivo . '.pdf', ['Attachment' => true]);
     }
 
-    public function generarReporteDeteccionesPorPeriodo()
+    // 1. Reporte de coincidencias de reconocimiento facial por zona
+    public function generarReporteDeteccionesPorZona()
     {
         $detectionModel = new DetectionModel();
-        $data['detecciones'] = $detectionModel->select('DATE(fecha_deteccion) as fecha_deteccion, COUNT(*) as total')
-                                              ->groupBy('DATE(fecha_deteccion)')
-                                              ->orderBy('fecha_deteccion', 'DESC')
-                                              ->findAll();
+        $data['detecciones_zona'] = $detectionModel->select('ubicacion, COUNT(*) as total, MAX(fecha_deteccion) as ultima_deteccion')
+                                                   ->groupBy('ubicacion')
+                                                   ->orderBy('total', 'DESC')
+                                                   ->findAll();
 
-        $this->generarPDF('reports/detecciones_por_periodo', $data, 'reporte_detecciones_por_periodo');
+        $this->generarPDF('reports/detecciones_por_zona', $data, 'reporte_detecciones_por_zona');
     }
 
-    public function reporteCriminalesDetectados()
+    // 2. Reporte de alertas generadas por identificación positiva de sospechosos
+    public function reporteAlertasGeneradas()
     {
         $detectionModel = new DetectionModel();
-        $data['criminales'] = $detectionModel->select('criminal_id, COUNT(*) as total')
-                                             ->join('criminals', 'criminals.idCriminal = detections.criminal_id')
-                                             ->groupBy('criminal_id')
-                                             ->orderBy('total', 'DESC')
-                                             ->findAll();
+        $data['alertas'] = $detectionModel->select('criminals.nombre, detections.fecha_deteccion, detections.ubicacion, detections.confianza')
+                                          ->join('criminals', 'criminals.idCriminal = detections.criminal_id')
+                                          ->where('detections.confianza >= 40') // Umbral de confianza para considerar una alerta positiva
+                                          ->orderBy('detections.fecha_deteccion', 'DESC')
+                                          ->findAll();
 
-        $this->generarPDF('reports/criminales_detectados', $data, 'reporte_criminales_detectados');
+        $this->generarPDF('reports/alertas_generadas', $data, 'reporte_alertas_generadas');
     }
 
-    public function reporteActividadDeOficiales()
-    {
-        $detectionModel = new DetectionModel();
-        $data['actividad'] = $detectionModel->select('users.nombres, COUNT(detections.idDeteccion) as total')
-                                            ->join('users', 'users.id = detections.oficial_id')
-                                            ->groupBy('users.id')
-                                            ->orderBy('total', 'DESC')
-                                            ->findAll();
-
-        $this->generarPDF('reports/actividad_de_oficiales', $data, 'reporte_actividad_de_oficiales');
-    }
-
-    public function reporteCriminalesPorDelito()
+    // 3. Reporte de criminales buscados actualizados
+    public function reporteCriminalesActualizados()
     {
         $criminalsModel = new CriminalsModel();
-        $data['criminales_por_delito'] = $criminalsModel->select('delitos.tipo, COUNT(criminals.idCriminal) as total')
-                                                        ->join('criminal_delitos', 'criminals.idCriminal = criminal_delitos.criminal_id')
-                                                        ->join('delitos', 'delitos.idDelito = criminal_delitos.delito_id')
-                                                        ->groupBy('delitos.tipo')
-                                                        ->findAll();
-
-        $this->generarPDF('reports/criminales_por_delito', $data, 'reporte_criminales_por_delito');
-    }
-
-    public function reporteUbicacionesDeteccion()
-    {
-        $detectionModel = new DetectionModel();
-        $data['ubicaciones'] = $detectionModel->select('ubicacion, COUNT(*) as total')
-                                              ->groupBy('ubicacion')
-                                              ->orderBy('total', 'DESC')
-                                              ->findAll();
-
-        $this->generarPDF('reports/ubicaciones_deteccion', $data, 'reporte_ubicaciones_deteccion');
-    }
-
-    public function reporteDeteccionesPorDispositivo()
-    {
-        $detectionModel = new DetectionModel();
-        $data['detecciones_dispositivo'] = $detectionModel->select('gafas.device_id, COUNT(detections.idDeteccion) as total')
-                                                          ->join('gafas', 'gafas.id = detections.oficial_id')
-                                                          ->groupBy('gafas.device_id')
-                                                          ->orderBy('total', 'DESC')
+        $data['criminales_actualizados'] = $criminalsModel->select('idCriminal, nombre, alias, delitos, razon_busqueda, activo, actualizado_en')
+                                                          ->orderBy('actualizado_en', 'DESC')
                                                           ->findAll();
 
-        $this->generarPDF('reports/detecciones_por_dispositivo', $data, 'reporte_detecciones_por_dispositivo');
+        $this->generarPDF('reports/criminales_actualizados', $data, 'reporte_criminales_actualizados');
     }
 
-    public function reporteCriminalesActivosInactivos()
+    // 4. Reporte de rendimiento del sistema (precisión de reconocimiento)
+    public function reporteRendimientoSistema()
     {
-        $criminalsModel = new CriminalsModel();
-        $data['criminales'] = $criminalsModel->select('activo, COUNT(*) as total')
-                                             ->groupBy('activo')
-                                             ->findAll();
-
-        $this->generarPDF('reports/criminales_activos_inactivos', $data, 'reporte_criminales_activos_inactivos');
+        $detectionModel = new DetectionModel();
+        $data['rendimiento'] = $detectionModel->select('COUNT(*) as total_detecciones, AVG(confianza) as promedio_confianza')
+                                              ->findAll();
+    
+        // Asumimos que solo habrá un resultado en este caso
+        $data['total_detecciones'] = $data['rendimiento'][0]['total_detecciones'];
+        $data['promedio_confianza'] = $data['rendimiento'][0]['promedio_confianza'];
+    
+        $this->generarPDF('reports/rendimiento_sistema', $data, 'reporte_rendimiento_sistema');
     }
-
     
 
-    public function reporteCriminalesAltasConfianzas()
+    // 5. Reporte de incidentes de falsas alarmas
+    public function reporteFalsasAlarmas()
     {
         $detectionModel = new DetectionModel();
-        $data['criminales'] = $detectionModel->select('criminal_id, AVG(confianza) as confianza_media')
-                                             ->groupBy('criminal_id')
-                                             ->having('confianza_media > 40')
-                                             ->findAll();
+        $data['falsas_alarmas'] = $detectionModel->select('idDeteccion, ubicacion, fecha_deteccion, confianza')
+                                                 ->where('confianza < 50') // Considerar detecciones con baja confianza como falsas alarmas
+                                                 ->orderBy('fecha_deteccion', 'DESC')
+                                                 ->findAll();
 
-        $this->generarPDF('reports/criminales_altas_confianzas', $data, 'reporte_criminales_altas_confianzas');
+        $this->generarPDF('reports/falsas_alarmas', $data, 'reporte_falsas_alarmas');
     }
 
-    public function reporteAvistamientosPorUbicacion()
+    // 6. Reporte de actividades de verificación manual
+    public function reporteActividadesVerificacionManual()
     {
         $detectionModel = new DetectionModel();
-        $data['avistamientos'] = $detectionModel->select('ubicacion, COUNT(*) as total')
-                                                ->groupBy('ubicacion')
-                                                ->orderBy('total', 'DESC')
-                                                ->findAll();
+        $data['verificaciones'] = $detectionModel->select('users.nombres, detections.fecha_deteccion, detections.ubicacion, detections.confianza')
+                                                 ->join('users', 'users.id = detections.oficial_id')
+                                                 ->where('detections.verificacion_manual', 1) // Campo adicional para identificar verificaciones manuales
+                                                 ->orderBy('detections.fecha_deteccion', 'DESC')
+                                                 ->findAll();
 
-        $this->generarPDF('reports/avistamientos_por_ubicacion', $data, 'reporte_avistamientos_por_ubicacion');
+        $this->generarPDF('reports/verificacion_manual', $data, 'reporte_verificacion_manual');
     }
 }

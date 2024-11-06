@@ -67,6 +67,21 @@ class NotificationModel extends Model
     {
         return $this->update($notificacionId, ['estado' => 'leida']);
     }
+
+    public function getUnreadNotificationsCount($userId)
+    {
+        return $this->where('oficial_id', $userId)
+                    ->where('estado', 'enviada') // Suponiendo que 'estado' puede ser 'leída' o 'no leída'
+                    ->countAllResults();
+    }
+
+    public function getUnreadNotifications($userId)
+    {
+        return $this->where('oficial_id', $userId)
+                    ->where('estado', 'enviada')
+                    ->orderBy('fecha_envio', 'DESC')
+                    ->findAll();
+    }
 }
 
 

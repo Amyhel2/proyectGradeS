@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Actividad de Oficiales</title>
+    <title>Reporte de Rendimiento del Sistema</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,12 +35,6 @@
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-        .tabla-reporte tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .tabla-reporte tr:hover {
-            background-color: #e1f5fe;
-        }
         .footer {
             text-align: center;
             margin-top: 20px;
@@ -51,24 +45,19 @@
 </head>
 <body>
     <div class="reporte-container">
-        <h1>REPORTE DE ACTIVIDAD DE OFICIALES</h1>
+        <h1>REPORTE DE RENDIMIENTO DEL SISTEMA</h1>
         <table class="tabla-reporte">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Oficial</th>
                     <th>Total Detecciones</th>
+                    <th>Promedio de Confianza</th>
                 </tr>
             </thead>
             <tbody>
-                <?php $contador = 1; ?>
-                <?php foreach ($actividad as $oficial): ?>
-                    <tr>
-                        <td><?= $contador++; ?></td>
-                        <td><?= esc($oficial['nombres']); ?></td>
-                        <td><?= esc($oficial['total']); ?></td>
-                    </tr>
-                <?php endforeach; ?>
+                <tr>
+                    <td><?= esc($total_detecciones); ?></td>
+                    <td><?= esc(number_format($promedio_confianza, 2)); ?>%</td>
+                </tr>
             </tbody>
         </table>
         <div class="footer">

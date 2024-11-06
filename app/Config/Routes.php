@@ -55,10 +55,18 @@ $routes->group('reports', function($routes) {
     $routes->get('reporteReincidencias', 'Reports::reporteReincidencias');
     $routes->get('reporteCriminalesAltasConfianzas', 'Reports::reporteCriminalesAltasConfianzas');
     $routes->get('reporteAvistamientosPorUbicacion', 'Reports::reporteAvistamientosPorUbicacion');
+
+   
+
 });
 
 
-
+$routes->get('reports/detecciones-por-zona', 'Reports::generarReporteDeteccionesPorZona');
+$routes->get('reports/alertas-generadas', 'Reports::reporteAlertasGeneradas');
+$routes->get('reports/criminales-actualizados', 'Reports::reporteCriminalesActualizados');
+$routes->get('reports/rendimiento-sistema', 'Reports::reporteRendimientoSistema');
+$routes->get('reports/falsas-alarmas', 'Reports::reporteFalsasAlarmas');
+$routes->get('reports/verificacion-manual', 'Reports::reporteActividadesVerificacionManual');
 
 // Rutas de seguridad y CSRF
 $routes->get('get_csrf_token', 'Security::get_csrf_token'); // Obtener token CSRF
@@ -77,5 +85,9 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
 $routes->get('map/showMap/(:segment)/(:segment)', 'Maps::showMap/$1/$2');
 $routes->get('detection/(:num)/images', 'Detections::verImagenDetectada/$1'); // 
 
+
+$routes->get('whatsapp', 'WhatsAppController::index'); // Para cargar el formulario
+$routes->post('whatsapp/send', 'WhatsAppController::send'); // Para procesar el envío
+$routes->get('send-message', 'TwilioController::sendMessage');
 
 

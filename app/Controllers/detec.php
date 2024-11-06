@@ -30,51 +30,54 @@ class Detections extends BaseController
     }
 
     public function almacenarDeteccion($criminalId, $deviceId)
-    {
-        $gafa = $this->gafasModel->where('device_id', $deviceId)->first();
-        $oficialId = $gafa['oficial_id'] ?? null;
+{
+    $gafa = $this->gafasModel->where('device_id', $deviceId)->first();
+    $oficialId = $gafa['oficial_id'] ?? null;
 
-        if (empty($criminalId) || empty($oficialId)) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'ID de criminal u oficial inválido.']);
-        }
-
-        $confianza = $this->request->getPost('confianza');
-        $foto_deteccion = $this->request->getPost('foto_deteccion');
-
-        if (empty($confianza) || empty($foto_deteccion)) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Datos incompletos.']);
-        }
-
-        $data = [
-            'criminal_id' => $criminalId,
-            'oficial_id' => $oficialId,
-            'fecha_deteccion' => date('Y-m-d H:i:s'),
-            'ubicacion' => '', 
-            'confianza' => $confianza,
-            'foto_deteccion' => $foto_deteccion
-        ];
-
-        try {
-            $this->detectionModel->insert($data);
-            $idDeteccion = $this->detectionModel->insertID();
-
-            // Procesar la imagen
-            $this->procesarImagenDeteccion($foto_deteccion, $idDeteccion);
-
-            // Almacenar la notificación
-            $notificacionExito = $this->notifications->enviarNotificacionDeteccion($idDeteccion, $oficialId, $confianza, '', '', $foto_deteccion);
-
-            // Verificar si la notificación se envió correctamente antes de generar audio
-            if ($notificacionExito) {
-                return $this->response->setJSON(['status' => 'success', 'message' => 'Detección almacenada y notificación enviada correctamente.']);
-            } else {
-                return $this->response->setJSON(['status' => 'success', 'message' => 'Detección almacenada pero no se pudo enviar la notificación.']);
-            }
-
-        } catch (\Exception $e) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Error al almacenar la detección: ' . $e->getMessage()]);
-        }
+    if (empty($criminalId) || empty($oficialId)) {
+        return $this->response->setJSON(['status' => 'error', 'message' => 'ID de criminal u oficial inválido.']);
     }
+
+    $confianza = $this->request->getPost('confianza');
+    $latitud = $this->request->getPost('latitud');
+    $longitud = $this->request->getPost('longitud');
+    $foto_deteccion = $this->request->getPost('foto_deteccion');
+
+    if (empty($confianza) || empty($latitud) || empty($longitud) || empty($foto_deteccion)) {
+        return $this->response->setJSON(['status' => 'error', 'message' => 'Datos incompletos.']);
+    }
+
+    $data = [
+        'criminal_id' => $criminalId,
+        'oficial_id' => $oficialId,
+        'fecha_deteccion' => date('Y-m-d H:i:s'),
+        'ubicacion' => "$latitud, $longitud",
+        'confianza' => $confianza,
+        'foto_deteccion' => $foto_deteccion
+    ];
+
+    try {
+        $this->detectionModel->insert($data);
+        $idDeteccion = $this->detectionModel->insertID();
+
+        // Procesar la imagen
+        $this->procesarImagenDeteccion($foto_deteccion, $idDeteccion);
+
+        // Almacenar la notificación
+        $notificacionExito = $this->notifications->enviarNotificacionDeteccion($idDeteccion, $oficialId, $confianza, $latitud, $longitud, $foto_deteccion);
+
+        // Verificar si la notificación se envió correctamente antes de generar audio
+        if ($notificacionExito) {
+            return $this->response->setJSON(['status' => 'success', 'message' => 'Detección almacenada y notificación enviada correctamente.']);
+        } else {
+            return $this->response->setJSON(['status' => 'success', 'message' => 'Detección almacenada pero no se pudo enviar la notificación.']);
+        }
+
+    } catch (\Exception $e) {
+        return $this->response->setJSON(['status' => 'error', 'message' => 'Error al almacenar la detección: ' . $e->getMessage()]);
+    }
+}
+
 
     private function procesarImagenDeteccion($foto_deteccion, $idDeteccion)
     {

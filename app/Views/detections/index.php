@@ -23,6 +23,8 @@
             <tbody>
                 <?php 
                 $contador = 1;
+                $ultimaUbicacion = ''; // Almacena la última ubicación encontrada
+
                 foreach($detecciones as $deteccion): ?>
                 <tr class="text-center">
                     <!--<td><?= esc($deteccion['idDeteccion']); ?></td>-->
@@ -30,13 +32,18 @@
                     <td><?= esc($deteccion['criminal_nombre']); ?></td>
                     <td><?= esc($deteccion['nombre_oficial']); ?></td>
                     <td>
-                        
-                            <a href="<?= base_url('detection/' . esc($deteccion['idDeteccion']).'/images'); ?>" >Ver Imagen</a>
-                        
+                        <a href="<?= base_url('detection/' . esc($deteccion['idDeteccion']).'/images'); ?>" >Ver Imagen</a>
                     </td>
                     <td>
                         <?php
-                            $ubicacion = esc($deteccion['ubicacion']);
+                            // Verifica si la ubicación está vacía
+                            $ubicacion = !empty($deteccion['ubicacion']) ? esc($deteccion['ubicacion']) : $ultimaUbicacion;
+
+                            // Actualiza la última ubicación solo si $ubicacion no está vacía
+                            if (!empty($ubicacion)) {
+                                $ultimaUbicacion = $ubicacion;
+                            }
+
                             $latLong = explode(',', $ubicacion);
                             $lat = trim($latLong[0]);
                             $long = trim($latLong[1]);
@@ -53,6 +60,3 @@
 </div>
 
 <?= $this->endSection(); ?>
-
-
-

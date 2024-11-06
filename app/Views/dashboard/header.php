@@ -63,30 +63,39 @@
       </li>
 
       <!-- Messages Dropdown Menu -->
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-comments nav-icon"></i>
-          <span class="badge badge-danger navbar-badge">3</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <!-- Mensajes -->
-          <a href="#" class="dropdown-item">
-            <div class="media">
-              <img src="<?php echo base_url();?>/assets/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Brad Diesel
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Call me whenever you can...</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
+      <!-- Messages Dropdown Menu -->
+<li class="nav-item dropdown">
+  <a class="nav-link" data-toggle="dropdown" href="#">
+    <i class="far fa-comments nav-icon"></i>
+    <?php if (isset($unreadCount) && $unreadCount > 0): ?>
+      <span class="badge badge-danger navbar-badge"><?= esc($unreadCount); ?></span>
+    <?php endif; ?>
+  </a>
+  <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+    <?php if (!empty($notifications)): ?>
+      <?php foreach ($notifications as $notification): ?>
+        <a href="#" class="dropdown-item">
+          <div class="media">
+            <img src="<?= base_url(); ?>/assets/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+            <div class="media-body">
+              <h3 class="dropdown-item-title">
+                Notificación
+                <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+              </h3>
+              <p class="text-sm"><?= esc($notification['mensaje']); ?></p>
+              <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> <?= esc($notification['fecha_envio']); ?></p>
             </div>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-        </div>
-      </li>
+          </div>
+        </a>
+        <div class="dropdown-divider"></div>
+      <?php endforeach; ?>
+      <a href="#" class="dropdown-item dropdown-footer">Ver todas las notificaciones</a>
+    <?php else: ?>
+      <a href="#" class="dropdown-item">No hay nuevas notificaciones</a>
+    <?php endif; ?>
+  </div>
+</li>
+
 
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">

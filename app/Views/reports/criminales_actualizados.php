@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Actividad de Oficiales</title>
+    <title>Reporte de Criminales Buscados Actualizados</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,22 +51,29 @@
 </head>
 <body>
     <div class="reporte-container">
-        <h1>REPORTE DE ACTIVIDAD DE OFICIALES</h1>
+        <h1>REPORTE DE CRIMINALES BUSCADOS ACTUALIZADOS</h1>
         <table class="tabla-reporte">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Oficial</th>
-                    <th>Total Detecciones</th>
+                    <th>Nombre</th>
+                    <th>Alias</th>
+                    
+                    <th>Razón de Búsqueda</th>
+                    <th>Activo</th>
+                    <th>Última Actualización</th>
                 </tr>
             </thead>
             <tbody>
-                <?php $contador = 1; ?>
-                <?php foreach ($actividad as $oficial): ?>
+                <?php $num = 1; foreach ($criminales_actualizados as $criminal): ?>
                     <tr>
-                        <td><?= $contador++; ?></td>
-                        <td><?= esc($oficial['nombres']); ?></td>
-                        <td><?= esc($oficial['total']); ?></td>
+                        <td><?= $num++; ?></td>
+                        <td><?= esc($criminal['nombre']); ?></td>
+                        <td><?= esc($criminal['alias']); ?></td>
+                        
+                        <td><?= esc($criminal['razon_busqueda']); ?></td>
+                        <td><?= esc($criminal['activo'] ? 'Sí' : 'No'); ?></td>
+                        <td><?= esc($criminal['actualizado_en']); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

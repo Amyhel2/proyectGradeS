@@ -8,30 +8,31 @@
     <h3 id="titulo">MODIFICAR DISPOSITIVO</h3>
   </div>
 
-  <!-- Card del formulario -->
   <div class="card shadow-lg">
     <div class="card-body p-5">
 
-      <!-- Mensaje de error -->
       <?php if (session()->getFlashdata('error')): ?>
         <div class="alert alert-danger">
           <?= session()->getFlashdata('error'); ?>
         </div>
       <?php endif; ?>
 
-      <!-- Formulario -->
-      <form method="POST" action="<?= base_url('gafas/' . $gafas['id']); ?>" enctype="multipart/form-data" class="mx-auto">
-        <input type="hidden" name="_method" value="PUT">
+      <form method="POST" action="<?= base_url('gafas/update/' . $gafas['id']); ?>" enctype="multipart/form-data" class="mx-auto">
+        <input type="hidden" name="_method" value="POST">
         <input type="hidden" name="id" value="<?= esc($gafas['id']); ?>">
-
         <?= csrf_field(); ?>
 
         <div class="row g-4">
-          <!-- Columna izquierda -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="oficial_id" class="form-label">ID del Oficial</label>
-              <input type="text" value="<?= esc($gafas['oficial_id']); ?>" id="oficial_id" class="form-control" name="oficial_id" required />
+              <label for="oficial_id" class="form-label">Oficial</label>
+              <select id="oficial_id" class="form-control" name="oficial_id" required>
+                <?php foreach ($oficiales as $oficial): ?>
+                  <option value="<?= esc($oficial['id']); ?>" <?= $gafas['oficial_id'] == $oficial['id'] ? 'selected' : ''; ?>>
+                    <?= esc($oficial['nombres'] . ' ' . $oficial['apellido_paterno'] . ' ' . $oficial['apellido_materno']); ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
             </div>
 
             <div class="mb-3">
@@ -47,7 +48,6 @@
         </div>
       </form>
 
-      <!-- Errores adicionales -->
       <?php if (session()->getFlashdata('errors')): ?>
         <div class="alert alert-danger my-3" role="alert">
           <?= session()->getFlashdata('errors'); ?>

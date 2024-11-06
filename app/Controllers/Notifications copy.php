@@ -17,7 +17,6 @@ class Notifications extends BaseController
     protected $usersModel;
     protected $detectionModel;
     protected $criminalsModel;
-    protected $userId;
 
     public function __construct()
     {
@@ -26,7 +25,6 @@ class Notifications extends BaseController
         $this->usersModel = new UsersModel();
         $this->detectionModel = new DetectionModel(); // Cambio aquí
         $this->criminalsModel = new CriminalsModel(); // Cambio aquí
-        $this->userId = session()->get('userid');
     }
 
     public function index()
@@ -96,43 +94,50 @@ class Notifications extends BaseController
         }
     }
 
-    
-    public function enviarTextoParaAudio($mensaje) {
-        $urlServidorFlask = 'http://192.168.100.16:5000/generar_audio_notificacion';
-    
-        $data = [
-            'mensaje' => $mensaje
-        ];
-    
-        $ch = curl_init($urlServidorFlask);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-    
-        $respuesta = curl_exec($ch);
-    
-        if ($respuesta === false) {
-            echo "Error al enviar el mensaje al servidor Flask: " . curl_error($ch);
-            curl_close($ch);
+    private function sendWhatsAppNotification($phone, $message)
+    {
+        $sid = getenv('TWILIO_ACCOUNT_SID');
+        $token = getenv('TWILIO_AUTH_TOKEN');
+        $twilioNumber = getenv('TWILIO_PHONE_NUMBER');
+        $client = new Client($sid, $token);
+
+        try {
+            $client->messages->create(
+                'whatsapp:' . $phone, 
+                [
+                    'from' => 'whatsapp:' . $twilioNumber,
+                    'body' => $message,
+                ]
+            );
+            echo "Mensaje de WhatsApp enviado.\n";
+            return true;
+        } catch (\Exception $e) {
+            echo 'Error al enviar WhatsApp: ' . $e->getMessage();
             return false;
         }
-    
-        curl_close($ch);
-        echo "Mensaje enviado al servidor Flask para conversión a audio.\n";
-        return true;
     }
-    
-    public function loadNavbar()
-    {
-        // Obtener el conteo de notificaciones no leídas
-        $unreadCount = $this->notificationModel->getUnreadNotificationsCount($this->userId);
-        $notifications = $this->notificationModel->getUnreadNotifications($this->userId);
 
-        // Pasar los datos a la vista
-        return view('dashboard/header', [
-            'unreadCount' => $unreadCount,
-            'notifications' => $notifications
-        ]);
+    private function enviarTextoParaAudio($mensaje)
+    {
+        $url = "http://localhost:5000/generar-audio";  
+        $data = ['mensaje' => $mensaje];
+        
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode == 200) {
+            echo "Notificación de audio enviada correctamente.\n";
+            return true;
+        } else {
+            echo "Error al enviar la notificación de audio. Código de estado: {$httpCode}\n";
+            return false;
+        }
     }
-    
 }

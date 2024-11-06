@@ -55,9 +55,10 @@ class GafasModel extends Model
     }
 
     public function getGafasConOficiales()
-    {
-        return $this->select('gafas.*, users.nombres AS nombre_oficial')
-                    ->join('users', 'users.id = gafas.oficial_id', 'left') // Cambia 'oficiales.id' según tu esquema
-                    ->findAll();
-    }
+{
+    return $this->select('gafas.*, CONCAT(users.nombres, " ", users.apellido_paterno," ", users.apellido_materno) AS nombre_oficial')
+                ->join('users', 'users.id = gafas.oficial_id')
+                ->where('gafas.estado', 1)
+                ->findAll();
+}
 }

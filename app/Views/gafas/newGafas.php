@@ -27,23 +27,29 @@
           <!-- Columna izquierda -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="oficial_id" class="form-label">ID del Oficial</label>
-              <input type="text" value="<?= old('oficial_id'); ?>" id="oficial_id" class="form-control" name="oficial_id" required />
+              <label for="oficial_id" class="form-label">Oficial</label>
+              <select id="oficial_id" class="form-select" name="oficial_id" required>
+                <option value="">Seleccione un oficial</option>
+                <?php foreach ($oficiales as $oficial): ?>
+                  <option value="<?= $oficial['id']; ?>" <?= old('oficial_id') == $oficial['id'] ? 'selected' : '' ?>>
+                    <?= $oficial['nombres'] . ' ' . $oficial['apellido_paterno'] . ' ' . $oficial['apellido_materno']; ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
             </div>
 
             <div class="mb-3">
-              <label for="device_id" class="form-label">ID del Dispositivo</label>
+              <label for="device_id" class="form-label">Nombre Del Dispositivo</label>
               <input type="text" value="<?= old('device_id'); ?>" id="device_id" class="form-control" name="device_id" required />
             </div>
 
             <div class="mb-3">
-    <label for="estado" class="form-label">Activo</label>
-    <select id="estado" class="form-select" name="activo" required>
-        <option value="1">Sí</option>
-        <option value="0">No</option>
-    </select>
-</div>
-
+              <label for="estado" class="form-label">Activo</label>
+              <select id="estado" class="form-select" name="activo" required>
+                <option value="1">Sí</option>
+                <option value="0">No</option>
+              </select>
+            </div>
           </div>
         </div>
 

@@ -58,12 +58,12 @@ class Criminals extends BaseController
     public function create()
 {
     $rules = [
-        'nombre' => 'required|max_length[30]',
+        'nombre' => 'required|max_length[60]',
         'alias' => 'required|max_length[30]',
         'ci' => 'required|max_length[20]|is_unique[criminals.ci]',
         'delitos' => 'required',  // Validamos que se seleccione al menos un delito
         'razon_busqueda' => 'required|max_length[255]',
-        'fotos' => 'uploaded[fotos]|max_size[fotos,2048]|ext_in[fotos,jpg,jpeg,png,webp]',
+        'fotos' => 'uploaded[fotos]|max_size[fotos,2048]|ext_in[fotos,jpg,png,jpeg,webp]',
     ];
 
     if (!$this->validate($rules)) {
@@ -75,6 +75,7 @@ class Criminals extends BaseController
     $fotosModel = new FotosModel();
     $criminalDelitosModel = new CriminalDelitosModel();  // AÑADIDO: Inicializa el modelo para la tabla intermedia
 
+    // Aplicacion de transaccion en la creacion de criminales
     $db = \Config\Database::connect();
     $db->transBegin();
 
@@ -165,7 +166,7 @@ public function update($idCriminal = null)
     }
 
     $rules = [
-        'nombre' => 'required|max_length[30]',
+        'nombre' => 'required|max_length[60]',
         'alias' => 'required|max_length[30]',
         'ci' => "required|max_length[20]|is_unique[criminals.ci,idCriminal,{$idCriminal}]",
         'delitos' => 'required',
@@ -176,6 +177,7 @@ public function update($idCriminal = null)
         return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
     }
 
+    //aplicacion de la transaccion en actualizar
     $criminalModel = new CriminalsModel();
     $db = \Config\Database::connect();
     $db->transBegin();
@@ -238,6 +240,7 @@ public function update($idCriminal = null)
             $criminalModel->delete($idCriminal);
 
             $db->transCommit();
+
 
             return redirect()->route('criminals');
         } catch (\Exception $e) {

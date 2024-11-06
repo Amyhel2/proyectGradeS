@@ -69,22 +69,123 @@ class Users extends BaseController
     public function create()
 {
     $rules = [
-        'user' => 'required|min_length[6]|max_length[30]|is_unique[users.user]',
-        'password' => 'required|min_length[8]|max_length[255]|is_unique[users.password]',
-        'repassword' => 'matches[password]',
-        'nombres' => 'required|max_length[30]',
-        'apellido_paterno' => 'required|max_length[30]',
-        'apellido_materno' => 'required|max_length[30]',
-        'ci' => 'required|max_length[20]|is_unique[users.ci]',
-        'rango' => 'required|max_length[20]',
-        'numero_placa' => 'required|max_length[20]|is_unique[users.numero_placa]',
-        'fecha_nacimiento' => 'required|valid_date[Y-m-d]',
-        'sexo' => 'required|in_list[M,F]',
-        'direccion' => 'required|max_length[255]',
-        'celular' => 'required|max_length[15]|numeric',
-        'email' => 'required|max_length[80]|valid_email|is_unique[users.email]',
-        'tipo' => 'required|in_list[admin,user]'
+        'user' => [
+            'rules' => 'required|min_length[6]|max_length[20]|is_unique[users.user]',
+            'errors' => [
+                'required' => 'El nombre de usuario es obligatorio.',
+                'min_length' => 'El nombre de usuario debe tener al menos 6 caracteres.',
+                'max_length' => 'El nombre de usuario no debe exceder 20 caracteres.',
+                'is_unique' => 'El nombre de usuario ya está registrado.'
+            ]
+        ],
+        'password' => [
+            'rules' => 'required|min_length[8]|max_length[255]|regex_match[/(?=.*\d)(?=.*[A-Z])(?=.*\W)/]',
+            'errors' => [
+                'required' => 'La contraseña es obligatoria.',
+                'min_length' => 'La contraseña debe tener al menos 8 caracteres.',
+                'regex_match' => 'La contraseña debe contener al menos un número, una letra mayúscula y un carácter especial.'
+            ]
+        ],
+        'repassword' => [
+            'rules' => 'matches[password]',
+            'errors' => [
+                'matches' => 'La confirmación de la contraseña no coincide.'
+            ]
+        ],
+        'nombres' => [
+            'rules' => 'required|max_length[30]',
+            'errors' => [
+                'required' => 'El nombre es obligatorio.',
+                'max_length' => 'El nombre no debe exceder 20 caracteres.'
+            ]
+        ],
+        'apellido_paterno' => [
+            'rules' => 'required|max_length[20]',
+            'errors' => [
+                'required' => 'El apellido paterno es obligatorio.',
+                'max_length' => 'El apellido paterno no debe exceder 20 caracteres.'
+            ]
+        ],
+        'apellido_materno' => [
+            'rules' => 'required|max_length[20]',
+            'errors' => [
+                'required' => 'El apellido materno es obligatorio.',
+                'max_length' => 'El apellido materno no debe exceder 20 caracteres.'
+            ]
+        ],
+        'ci' => [
+            'rules' => 'required|min_length[7]|max_length[8]|is_unique[users.ci]',
+            'errors' => [
+                'required' => 'El CI es obligatorio.',
+                'is_unique' => 'El CI ya está registrado.',
+                'min_length' => 'El CI no debe ser menor a 7 caracteres.',
+                'max_length' => 'El CI no debe exceder 8 caracteres.'
+            ]
+        ],
+        'rango' => [
+                'rules' => 'required|min_length[4]|max_length[20]|regex_match[/^[a-zA-Z\s]+$/]',
+                'errors' => [
+                    'required' => 'El rango es obligatorio.',
+                    'regex_match' => 'El rango no debe contener n-umeros ni caracteres especiales.',
+                    'min_length' => 'El rango no debe ser menor a 4 caracteres.',
+                    'max_length' => 'El rango no debe exceder 20 caracteres.'
+                ]
+            ],
+        'numero_placa' => [
+            'rules' => 'required|exact_length[6]|is_unique[users.numero_placa]',
+            'errors' => [
+                'required' => 'El número de placa es obligatorio.',
+                'is_unique' => 'El número de placa ya está registrado.',
+                'exact_length' => 'El número de placa debe contener solo 6 caracteres.'
+            ]
+        ],
+        'fecha_nacimiento' => [
+            'rules' => 'required|valid_date[Y-m-d]',
+            'errors' => [
+                'required' => 'La fecha de nacimiento es obligatoria.',
+                'valid_date' => 'La fecha de nacimiento debe tener un formato válido (YYYY-MM-DD).'
+            ]
+        ],
+        'sexo' => [
+            'rules' => 'required|in_list[M,F]',
+            'errors' => [
+                'required' => 'El sexo es obligatorio.',
+                'in_list' => 'El sexo debe ser M (Masculino) o F (Femenino).'
+            ]
+        ],
+        'direccion' => [
+            'rules' => 'required|max_length[100]',
+            'errors' => [
+                'required' => 'La dirección es obligatoria.',
+                'max_length' => 'La dirección no debe exceder 100 caracteres.'
+            ]
+        ],
+        'celular' => [
+            'rules' => 'required|exact_length[11]|numeric',
+            'errors' => [
+                'required' => 'El número de celular es obligatorio.',
+                'numeric' => 'El número de celular debe contener 11 dígitos numéricos.',
+                'exact_length' => 'El número de celular no debe exceder 11 caracteres y debe incluir el codigo del pais.'
+            ]
+        ],
+        'email' => [
+            'rules' => 'required|max_length[80]|valid_email|is_unique[users.email]',
+            'errors' => [
+                'required' => 'El correo electrónico es obligatorio.',
+                'valid_email' => 'Debe ingresar un correo electrónico válido.',
+                'is_unique' => 'El correo electrónico ya está registrado.',
+                'max_length' => 'El correo electrónico no debe exceder 80 caracteres.'
+            ]
+        ],
+        'tipo' => [
+            'rules' => 'required|in_list[admin,user]',
+            'errors' => [
+                'required' => 'El tipo de usuario es obligatorio.',
+                'in_list' => 'El tipo de usuario debe ser admin o user.'
+            ]
+        ]
     ];
+    
 
     if (!$this->validate($rules)) {
         return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
@@ -189,21 +290,88 @@ class Users extends BaseController
         }
 
         $rules = [
-            //'user' => "required|max_length[30]|is_unique[users.user,id,{$id}]",
-            //'password' => "required|min_length[8]|max_length[255]|is_unique[users.password,id,{$id}]",
-            'nombres' => 'required|max_length[30]',
-            'apellido_paterno' => 'required|max_length[30]',
-            'apellido_materno' => 'required|max_length[30]',
-            'ci' => "required|max_length[20]|is_unique[users.ci,id,{$id}]",
-            'rango' => 'required|max_length[20]',
-            'numero_placa' => "required|max_length[20]|is_unique[users.numero_placa,id,{$id}]",
-            'fecha_nacimiento' => 'required|valid_date[Y-m-d]',
-            //'sexo' => 'required|in_list[M,F]',
-            'direccion' => 'required|max_length[255]',
-            'celular' => 'required|max_length[15]|numeric',
-            'email' => 'required|max_length[80]|valid_email',
-            'tipo' => 'required|in_list[admin,user]'
+            
+            'nombres' => [
+                'rules' => 'required|max_length[30]',
+                'errors' => [
+                    'required' => 'El nombre es obligatorio.',
+                    'max_length' => 'El nombre no debe exceder 30 caracteres.'
+                ]
+            ],
+            'apellido_paterno' => [
+                'rules' => 'required|max_length[30]',
+                'errors' => [
+                    'required' => 'El apellido paterno es obligatorio.',
+                    'max_length' => 'El apellido paterno no debe exceder 30 caracteres.'
+                ]
+            ],
+            'apellido_materno' => [
+                'rules' => 'required|max_length[30]',
+                'errors' => [
+                    'required' => 'El apellido materno es obligatorio.',
+                    'max_length' => 'El apellido materno no debe exceder 30 caracteres.'
+                ]
+            ],
+            'ci' => [
+            'rules' => "required|min_length[7]|max_length[8]|is_unique[users.ci,id,{$id}]",
+            'errors' => [
+                'required' => 'El CI es obligatorio.',
+                'is_unique' => 'El CI ya está registrado.',
+                'min_length' => 'El CI no debe ser menor a 7 caracteres.',
+                'max_length' => 'El CI no debe exceder 8 caracteres.'
+            ]
+        ],
+            
+            'rango' => [
+                'rules' => 'required|min_length[4]|max_length[20]|regex_match[/^[a-zA-Z\s]+$/]',
+                'errors' => [
+                    'required' => 'El rango es obligatorio.',
+                    'regex_match' => 'El rango no debe contener n-umeros ni caracteres especiales.',
+                    'min_length' => 'El rango no debe ser menor a 4 caracteres.',
+                    'max_length' => 'El rango no debe exceder 20 caracteres.'
+                ]
+            ],
+            
+            'fecha_nacimiento' => [
+                'rules' => 'required|valid_date[Y-m-d]',
+                'errors' => [
+                    'required' => 'La fecha de nacimiento es obligatoria.',
+                    'valid_date' => 'La fecha de nacimiento debe tener un formato válido (YYYY-MM-DD).'
+                ]
+            ],
+            'direccion' => [
+                'rules' => 'required|max_length[255]',
+                'errors' => [
+                    'required' => 'La dirección es obligatoria.',
+                    'max_length' => 'La dirección no debe exceder 255 caracteres.'
+                ]
+            ],
+            'celular' => [
+                'rules' => 'required|exact_length[11]|numeric',
+                'errors' => [
+                'required' => 'El número de celular es obligatorio.',
+                'numeric' => 'El número de celular debe contener 11 dígitos numéricos.',
+                'exact_length' => 'El número de celular debe contener 11 dígitos y debe incluir el codigo del pais.'
+            ]
+            ],
+            'email' => [
+                'rules' => "required|max_length[80]|valid_email|is_unique[users.email,id,{$id}]",
+                'errors' => [
+                    'required' => 'El correo electrónico es obligatorio.',
+                    'valid_email' => 'Debe ingresar un correo electrónico válido.',
+                    'is_unique' => 'El correo electrónico ya está registrado.',
+                    'max_length' => 'El correo electrónico no debe exceder 80 caracteres.'
+                ]
+            ],
+            'tipo' => [
+                'rules' => 'required|in_list[admin,user]',
+                'errors' => [
+                    'required' => 'El tipo de usuario es obligatorio.',
+                    'in_list' => 'El tipo de usuario debe ser admin o user.'
+                ]
+            ]
         ];
+        
     
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
@@ -236,6 +404,10 @@ class Users extends BaseController
             'activo' => $post['activo']
             //'token_activacion' => $token
         ]);
+
+        $this->session->setFlashdata('message', 'Usuario actualizado con éxito.');
+    $this->session->setFlashdata('message_type', 'success');
+
 
         return redirect()->route('users');
     }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Actividad de Oficiales</title>
+    <title>Reporte de Alertas Generadas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,22 +51,25 @@
 </head>
 <body>
     <div class="reporte-container">
-        <h1>REPORTE DE ACTIVIDAD DE OFICIALES</h1>
+        <h1>REPORTE DE ALERTAS GENERADAS</h1>
         <table class="tabla-reporte">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Oficial</th>
-                    <th>Total Detecciones</th>
+                    <th>Nombre del Criminal</th>
+                    <th>Fecha de Detección</th>
+                    <th>Ubicación</th>
+                    <th>Confianza (%)</th>
                 </tr>
             </thead>
             <tbody>
-                <?php $contador = 1; ?>
-                <?php foreach ($actividad as $oficial): ?>
+                <?php $num = 1; foreach ($alertas as $alerta): ?>
                     <tr>
-                        <td><?= $contador++; ?></td>
-                        <td><?= esc($oficial['nombres']); ?></td>
-                        <td><?= esc($oficial['total']); ?></td>
+                        <td><?= $num++; ?></td>
+                        <td><?= esc($alerta['nombre']); ?></td>
+                        <td><?= esc($alerta['fecha_deteccion']); ?></td>
+                        <td><?= esc($alerta['ubicacion']); ?></td>
+                        <td><?= esc($alerta['confianza']); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

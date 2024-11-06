@@ -72,13 +72,19 @@ class DetectionModel extends Model
 
     public function getDetections()
     {
-        return $this->select('detections.*, users.nombres AS nombre_oficial, criminals.nombre AS criminal_nombre')
+        return $this->select('detections.*, CONCAT(users.nombres," ",users.apellido_paterno," ",apellido_materno) AS nombre_oficial, criminals.nombre AS criminal_nombre')
             ->join('users', 'users.id = detections.oficial_id')
             ->join('criminals', 'criminals.idCriminal = detections.criminal_id') // Unir con criminales
             ->findAll();
     }
 
-    
+    public function getDetectionsByZone()
+    {
+        return $this->select('ubicacion, COUNT(*) as total')
+                    ->groupBy('ubicacion')
+                    ->orderBy('total', 'DESC')
+                    ->findAll();
+    }
 }
 
 
